@@ -559,11 +559,11 @@ function draw() {
 
     ctx.font = '12px serif';
     ctx.fillStyle = 'white';
-    ctx.fillText("Ping: " + ping, CANVAS_WIDTH - 100, 10);
+    ctx.fillText('Ping: ' + ping, CANVAS_WIDTH - 100, 10);
 
     ctx.font = '14px serif';
     ctx.fillStyle = 'white';
-    ctx.fillText("Score: " + player.score, 20, 20);
+    ctx.fillText('Score: ' + player.score, 20, 20);
 
     ctx.font = '24px serif';
     ctx.fillStyle = 'white';
@@ -572,10 +572,10 @@ function draw() {
     if (!player.alive) {
         ctx.font = '32px serif';
         ctx.fillStyle = 'white';
-        ctx.fillText("You died.", 50, 150);
+        ctx.fillText('You died.', 50, 150);
         ctx.font = '32px serif';
         ctx.fillStyle = 'white';
-        ctx.fillText("Respawning in " + player.spawn_timer + "...", 50, 250);
+        ctx.fillText('Respawning in ' + player.spawn_timer + '...', 50, 250);
     }
 
     if (message_timer > 0) {
