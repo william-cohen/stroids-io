@@ -36,7 +36,7 @@ io.on('connection', function(socket) {
 
 setInterval(function () {
     game.update();
-    game.emit();
+    game.emit(Date.now()); //FIXME
     //Emit player position data from here??
 }, 1000.0 / FPS);
 
