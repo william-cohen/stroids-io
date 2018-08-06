@@ -21,6 +21,7 @@ socket.emit('join', username);
 
 let player = new Player(socket);
 let enemies = new HashMap();
+let leaderID = '';
 let stars = [];
 let numStars = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000018);
 for (var i = 0; i < numStars; i++) {
@@ -34,6 +35,7 @@ socket.on('message', function(text) {
 });
 
 socket.on('state', function(state) {
+    leaderID = state.leader;
     let player_state = state.player;
     let enemy_states = state.enemies || []; //
     let removedEnemies = state.removedEnemies;
@@ -60,11 +62,13 @@ socket.on('state', function(state) {
 });
 
 function update() {
-    for (let i = 0; i < stars.length; i++) {
-        stars[i].update();
-    }
     for (let i = 0; i < enemies.length; i++) {
         enemies[i].update();
+    }
+
+    if (!player.alive) return;
+    for (let i = 0; i < stars.length; i++) {
+        stars[i].update();
     }
     player.update();
 }
@@ -88,7 +92,7 @@ function draw() {
         enemyArray[i].draw(ctx);
     }
 
-    player.draw(ctx);
+    if (player.alive) player.draw(ctx);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     ctx.font = '12px serif';
@@ -101,17 +105,14 @@ function draw() {
 
     ctx.font = '24px serif';
     ctx.fillStyle = 'white';
-    ctx.fillText('DEVELOPMENT', CANVAS_WIDTH/2 - 50, 20);
+    let leaderText = (leaderID == player.id ? 'You are the leader.' : 'Leader: ' + enemies.get(leaderID).username);
+    ctx.fillText(leaderText, CANVAS_WIDTH/2 - 50, 20);
 
     if (!player.alive) {
         ctx.font = '32px serif';
         ctx.fillStyle = 'white';
         ctx.fillText('You died.', 50, 150);
-        ctx.font = '32px serif';
-        ctx.fillStyle = 'white';
-        ctx.fillText('Respawning...', 50, 250);
     }
-}
 
 const FPS = 30;
 setInterval(function() {
@@ -119,4 +120,4 @@ setInterval(function() {
     draw();
 }, 1000/FPS);
 
-console.log('Client v0.0.9');
+console.log('Client v0.1.5');

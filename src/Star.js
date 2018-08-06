@@ -18,17 +18,17 @@ class Star {
         if (this.y > this.maxY) this.y -= this.maxY;
 
         switch (this.size) {
-        case 3:
-            this.x -= 0.5 * this.player.vel.x;
-            this.y -= 0.5 * this.player.vel.y;
+        case 1:
+            this.x += 0.5 * this.player.vel.x;
+            this.y += 0.5 * this.player.vel.y;
             break;
         case 2:
-            this.x -= 0.5 * 0.66 * this.player.vel.x;
-            this.y -= 0.5 * 0.66 * this.player.vel.y;
+            this.x += 0.5 * 0.66 * this.player.vel.x;
+            this.y += 0.5 * 0.66 * this.player.vel.y;
             break;
-        case 1:
-            this.x -= 0.5 * 0.33 * this.player.vel.x;
-            this.y -= 0.5 * 0.33 * this.player.vel.y;
+        case 3:
+            this.x += 0.5 * 0.33 * this.player.vel.x;
+            this.y += 0.5 * 0.33 * this.player.vel.y;
             break;
         default:
             break;

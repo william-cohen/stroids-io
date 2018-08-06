@@ -14,6 +14,7 @@ class Enemy {
         this.spriteT2 = new Image();
         this.spriteT2.src = 'img/playerT2.png';
         this.rotation = 0.0;
+        this.alive = true;
     }
 
     setState(state) {
@@ -22,6 +23,7 @@ class Enemy {
         this.vel.x = state.vx;
         this.vel.y = state.vy;
         this.rotation = state.rotation;
+        this.alive = state.alive;
     }
 
     update() {
@@ -35,6 +37,7 @@ class Enemy {
     }
 
     draw(ctx) {
+        if (!this.alive) return;
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.rotate(this.rotation + Math.PI/2);

@@ -7,6 +7,7 @@ class Player {
     constructor(socket) {
         this.tick = 0;
         this.socket = socket;
+        this.id = 'null';
 
         this.alive = true;
         this.pos = new Vector2f(0.0, 0.0);
@@ -23,11 +24,13 @@ class Player {
     }
 
     setState(state) {
+        this.id = state.id;
         this.pos.x = state.x;
         this.pos.y = state.y;
         this.vel.x = state.vx;
         this.vel.y = state.vy;
         this.rotation = state.rotation;
+        this.alive = state.alive;
     }
 
     update() {
