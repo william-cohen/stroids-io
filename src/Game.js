@@ -10,6 +10,7 @@ const ctx = canvas.getContext('2d');
 
 const Player = require('./Player');
 const Enemy = require('./Enemy');
+const Asteroid = require('./Asteroid');
 const HashMap = require('./hashmap');
 const Star = require('./Star');
 
@@ -21,6 +22,7 @@ socket.emit('join', username);
 
 let player = new Player(socket);
 let enemies = new HashMap();
+let asteroids = [];
 let leaderID = '';
 let stars = [];
 let numStars = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000018);
@@ -38,7 +40,9 @@ socket.on('state', function(state) {
     leaderID = state.leader;
     let player_state = state.player;
     let enemy_states = state.enemies || []; //
-    let removedEnemies = state.removedEnemies;
+    let removedEnemies = state.removedPlayers;
+    let addedPlayers = state.addedPlayers;
+    let updatedAsteroids = state.updatedAsteroids;
 
     //Update player state
     player.setState(player_state);
@@ -49,7 +53,7 @@ socket.on('state', function(state) {
         let enemy_state = enemy_states[i];
         let enemy_id = enemy_state.id;
         if (!enemies.has(enemy_id)) {
-            enemies.set(enemy_id, new Enemy(enemy_id, enemy_state.username));
+            enemies.set(enemy_id, new Enemy(enemy_id, ''));
         }
         enemies.get(enemy_id).setState(enemy_state);
     }
@@ -59,12 +63,32 @@ socket.on('state', function(state) {
         enemies.delete(removedEnemies[i]);
     }
 
+    //Create player objects and mark with ID
+    for (let i = 0; i < addedPlayers.length; i++) {
+        let newPlayerInfo = addedPlayers[i];
+        if (newPlayerInfo.id == player.id) continue;
+        enemies.set(newPlayerInfo.id, new Enemy(newPlayerInfo.id, newPlayerInfo.username));
+    }
+
+    //Create/update Asteroids as nessesary
+    for (let i = 0; i < updatedAsteroids.length; i++) {
+        let asteroidInfo = updatedAsteroids[i];
+        let id = asteroidInfo.id;
+        if (asteroids[id] == null) asteroids[id] = new Asteroid(id%3+1);
+        asteroids[id].setState(asteroidInfo);
+    }
+
 });
 
 function update() {
     for (let i = 0; i < enemies.length; i++) {
         enemies[i].update();
     }
+
+    for (let i = 0; i < asteroids.length; i++) {
+        asteroids[i].update();
+    }
+
 
     if (!player.alive) return;
     for (let i = 0; i < stars.length; i++) {
@@ -88,8 +112,13 @@ function draw() {
     }
 
     let enemyArray = enemies.values();
-    for (var i = 0; i < enemyArray.length; i++) {
+    for (let i = 0; i < enemyArray.length; i++) {
         enemyArray[i].draw(ctx);
+    }
+
+    for (let i = 0; i < asteroids.length; i++) {
+        if (asteroids[i] == null) continue;
+        asteroids[i].draw(ctx);
     }
 
     if (player.alive) player.draw(ctx);
@@ -113,6 +142,7 @@ function draw() {
         ctx.fillStyle = 'white';
         ctx.fillText('You died.', 50, 150);
     }
+}
 
 const FPS = 30;
 setInterval(function() {
@@ -120,4 +150,4 @@ setInterval(function() {
     draw();
 }, 1000/FPS);
 
-console.log('Client v0.1.5');
+console.log('Client v0.1.6');

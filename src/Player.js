@@ -45,7 +45,7 @@ class Player {
             this.thrust = false;
 
             this.tick++;
-            if (this.tick > 5) this.tick -= 5;
+            this.tick %= 6;
 
             //Left Arrow Key
             if (this.keys.isPressed(37)) {

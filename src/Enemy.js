@@ -14,6 +14,8 @@ class Enemy {
         this.spriteT2 = new Image();
         this.spriteT2.src = 'img/playerT2.png';
         this.rotation = 0.0;
+        this.tick = 0;
+        this.thrust = false;
         this.alive = true;
     }
 
@@ -23,6 +25,7 @@ class Enemy {
         this.vel.x = state.vx;
         this.vel.y = state.vy;
         this.rotation = state.rotation;
+        this.thrust = state.thrust;
         this.alive = state.alive;
     }
 
@@ -30,7 +33,7 @@ class Enemy {
         if (!this.alive) return;
 
         this.tick++;
-        if (this.tick > 5) this.tick -= 5;
+        this.tick %= 6;
 
         this.pos.x += this.vel.x;
         this.pos.y += this.vel.y;
@@ -42,10 +45,15 @@ class Enemy {
         ctx.translate(this.pos.x, this.pos.y);
         ctx.rotate(this.rotation + Math.PI/2);
         ctx.translate(-this.pos.x, -this.pos.y);
-
-        //FIXME Thrust parameter
-        ctx.drawImage(this.spriteT, this.pos.x - 19, this.pos.y - 24);
-
+        if (this.thrust) {
+            if (this.tick > 2) {
+                ctx.drawImage(this.spriteT, this.pos.x - 19, this.pos.y - 24);
+            } else {
+                ctx.drawImage(this.spriteT2, this.pos.x - 19, this.pos.y - 24);
+            }
+        } else {
+            ctx.drawImage(this.sprite, this.pos.x - 19, this.pos.y - 24);
+        }
         ctx.restore();
         ctx.font = '12px serif';
         ctx.fillStyle = 'white';
