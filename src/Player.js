@@ -45,7 +45,7 @@ class Player {
             this.thrust = false;
 
             this.tick++;
-            this.tick %= 6;
+            this.tick %= 30;
 
             //Left Arrow Key
             if (this.keys.isPressed(37)) {
@@ -68,8 +68,9 @@ class Player {
         this.pos.x += this.vel.x;
         this.pos.y += this.vel.y;
 
-        this.vel.x *= 0.9;
-        this.vel.y *= 0.9;
+        // TEST
+        this.vel.x *= 0.95;
+        this.vel.y *= 0.95;
     }
 
     draw(ctx) {
@@ -79,7 +80,7 @@ class Player {
         ctx.rotate(this.rotation + Math.PI / 2);
         ctx.translate(-this.pos.x, -this.pos.y);
         if (this.thrust) {
-            if (this.tick > 2) {
+            if (this.tick%10 > 5) {
                 ctx.drawImage(this.spriteT, this.pos.x - 19, this.pos.y - 24);
             } else {
                 ctx.drawImage(this.spriteT2, this.pos.x - 19, this.pos.y - 24);

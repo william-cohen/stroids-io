@@ -8,15 +8,16 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 const ctx = canvas.getContext('2d');
 
+const socket = io(CONNECTION);
+
 const Player = require('./Player');
 const Enemy = require('./Enemy');
 const Asteroid = require('./Asteroid');
 const HashMap = require('./hashmap');
 const Star = require('./Star');
+const Latency = require('./Latency').init(socket);
 
 const username = prompt('Please enter a username: ');
-
-const socket = io(CONNECTION);
 
 socket.emit('join', username);
 
@@ -31,6 +32,10 @@ for (var i = 0; i < numStars; i++) {
     stars.push(new Star(2, GAME_SIZE, GAME_SIZE, player));
     stars.push(new Star(1, GAME_SIZE, GAME_SIZE, player));
 }
+
+socket.on('drop', function(times) {
+    Latency.calc(times);
+});
 
 socket.on('message', function(text) {
     console.log('Message: ' + text);
@@ -81,6 +86,8 @@ socket.on('state', function(state) {
 });
 
 function update() {
+    Latency.update();
+
     for (let i = 0; i < enemies.length; i++) {
         enemies[i].update();
     }
@@ -126,7 +133,7 @@ function draw() {
 
     ctx.font = '12px serif';
     ctx.fillStyle = 'white';
-    ctx.fillText('Ping: ' + 'null', CANVAS_WIDTH - 100, 10);
+    ctx.fillText('Ping: ' + Latency.currentLatency, CANVAS_WIDTH - 100, 10);
 
     ctx.font = '14px serif';
     ctx.fillStyle = 'white';
@@ -134,7 +141,7 @@ function draw() {
 
     ctx.font = '24px serif';
     ctx.fillStyle = 'white';
-    let leaderText = (leaderID == player.id ? 'You are the leader.' : 'Leader: ' + enemies.get(leaderID).username);
+    let leaderText = (leaderID == player.id ? 'You are the leader.' : 'Leader: ' + (enemies.get(leaderID) || {username: ' '}).username);
     ctx.fillText(leaderText, CANVAS_WIDTH/2 - 50, 20);
 
     if (!player.alive) {
@@ -150,4 +157,4 @@ setInterval(function() {
     draw();
 }, 1000/FPS);
 
-console.log('Client v0.1.6');
+console.log('Client v0.1.8');

@@ -1,7 +1,6 @@
 'use strict';
 
 class Star {
-
     constructor(size, maxX, maxY, player) {
         this.x = Math.random() * maxX;
         this.y = Math.random() * maxY;

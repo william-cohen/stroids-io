@@ -1,7 +1,9 @@
 'use strict';
 
+require('dotenv').config();
+
 const PORT = process.env.PORT || 3000;
-const FPS = 30.0;
+const TICK_RATE = 30.0;
 
 const express = require('express');
 const http = require('http');
@@ -13,9 +15,21 @@ const Game = require('./lib/Game');
 
 app.use(express.static('./public'));
 
+const SERVER_START_TIME = Date.now();
 const game = new Game();
 
+function getServerTime() {
+    return Date.now() - SERVER_START_TIME;
+}
+
 io.on('connection', function(socket) {
+    socket.on('drip', function(clientTime) {
+        socket.emit('drop', {
+            client: clientTime,
+            server: Date.now()
+        });
+    });
+
     //Player joins (or rejoins) the game
     socket.on('join', function(name) {
         console.log('Player (id: ' + socket.id + ') has joined.');
@@ -36,8 +50,7 @@ io.on('connection', function(socket) {
 
 setInterval(function () {
     game.update();
-    game.emit(Date.now()); //FIXME
-    //Emit player position data from here??
-}, 1000.0 / FPS);
+    game.emit(getServerTime());
+}, 1000.0 / TICK_RATE);
 
 console.log('Game server running on port: ' + PORT + '...');
