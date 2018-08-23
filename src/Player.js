@@ -1,7 +1,7 @@
 /* global Image */
 
 const KeyListener = require('./KeyListener');
-const Vector2f = require('./Vector2f');
+const Vector2 = require('./Vector2');
 
 class Player {
     constructor(socket) {
@@ -10,8 +10,8 @@ class Player {
         this.id = 'null';
 
         this.alive = true;
-        this.pos = new Vector2f(0.0, 0.0);
-        this.vel = new Vector2f(0.0, 0.0);
+        this.pos = new Vector2(0.0, 0.0);
+        this.vel = new Vector2(0.0, 0.0);
 
         this.rotation = 0.0;
         this.keys = new KeyListener();
@@ -33,7 +33,8 @@ class Player {
         this.alive = state.alive;
     }
 
-    update() {
+    update(delta) {
+        let thrust = new Vector2(0,0);
         let input = {
             'W' : false,
             'A' : false,
@@ -42,7 +43,7 @@ class Player {
         };
         this.tick++; this.tick %= 30;
         if (this.alive) {
-            this.thrust = false;
+            this.thrusting = false;
 
             this.tick++;
             this.tick %= 30;
@@ -58,19 +59,15 @@ class Player {
             //Up Arrow Key
             if (this.keys.isPressed(38) || this.keys.isPressed(32)) {
                 input.W = true;
-                this.thrust = true;
-                this.vel.x += Math.cos(this.rotation);
-                this.vel.y += Math.sin(this.rotation);
+                this.thrusting = true;
+                thrust.x = 30.0 * Math.cos(this.rotation);
+                thrust.y = 30.0 * Math.sin(this.rotation);
             }
             this.socket.emit('input', input);
         }
 
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
-
-        // TEST
-        this.vel.x *= 0.95;
-        this.vel.y *= 0.95;
+        this.vel = this.vel.add(thrust.subtract(this.vel.scale(1.75)).scale(delta));
+        this.pos = this.pos.add(this.vel);
     }
 
     draw(ctx) {
@@ -79,7 +76,7 @@ class Player {
         ctx.translate(this.pos.x, this.pos.y);
         ctx.rotate(this.rotation + Math.PI / 2);
         ctx.translate(-this.pos.x, -this.pos.y);
-        if (this.thrust) {
+        if (this.thrusting) {
             if (this.tick%10 > 5) {
                 ctx.drawImage(this.spriteT, this.pos.x - 19, this.pos.y - 24);
             } else {

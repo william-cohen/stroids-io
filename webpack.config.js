@@ -5,7 +5,7 @@ module.exports = {
     mode: 'production',
     entry: './src/Game.js',
     output: {
-        path: path.resolve(__dirname, 'public'),
+        path: path.resolve(__dirname, 'public/js'),
         filename: 'game.js'
     },
     module: {

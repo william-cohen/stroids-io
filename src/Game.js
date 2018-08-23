@@ -85,7 +85,7 @@ socket.on('state', function(state) {
 
 });
 
-function update() {
+function update(delta) {
     Latency.update();
 
     for (let i = 0; i < enemies.length; i++) {
@@ -93,7 +93,7 @@ function update() {
     }
 
     for (let i = 0; i < asteroids.length; i++) {
-        asteroids[i].update();
+        asteroids[i].update(delta);
     }
 
 
@@ -101,7 +101,7 @@ function update() {
     for (let i = 0; i < stars.length; i++) {
         stars[i].update();
     }
-    player.update();
+    player.update(delta);
 }
 
 function draw() {
@@ -152,8 +152,11 @@ function draw() {
 }
 
 const FPS = 30;
+let lastUpdate = Date.now();
 setInterval(function() {
-    update();
+    let delta = (Date.now() - lastUpdate)/1000;
+    update(delta);
+    lastUpdate = Date.now();
     draw();
 }, 1000/FPS);
 

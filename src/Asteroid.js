@@ -1,10 +1,10 @@
 /* global Image */
-const Vector2f = require('./Vector2f');
+const Vector2 = require('./Vector2');
 
 class Asteroid {
     constructor(size) {
-        this.pos = new Vector2f(0.0, 0.0);
-        this.vel = new Vector2f(0.0, 0.0);
+        this.pos = new Vector2(0.0, 0.0);
+        this.vel = new Vector2(0.0, 0.0);
         this.sprite = new Image();
         this.sprite.src = '';
         this.radius = 0;
@@ -33,9 +33,9 @@ class Asteroid {
         this.vel.y = state.vy;
     }
 
-    update() {
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
+    update(delta) {
+        this.pos.x += this.vel.x*delta;
+        this.pos.y += this.vel.y*delta;
     }
 
     draw(ctx) {

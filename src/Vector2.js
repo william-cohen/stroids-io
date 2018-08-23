@@ -1,6 +1,6 @@
 'use strict';
 
-class Vector2f {
+class Vector2 {
     /**
      * Vector constructor
      * @constructor
@@ -30,31 +30,31 @@ class Vector2f {
 
     /**
      * Adds this vector to another vector. Returns new vector
-     * @param {Vector2f} vec The vector to add
-     * @return {Vector2f}
+     * @param {Vector2} vec The vector to add
+     * @return {Vector2}
      */
     add(vec) {
-        return new Vector2f(this.x+vec.x, this.y+vec.y);
+        return new Vector2(this.x+vec.x, this.y+vec.y);
     }
 
     /**
      * Subtracts this vector to another vector. Returns new vector
-     * @param {Vector2f} vec The vector to subtract
-     * @return {Vector2f}
+     * @param {Vector2} vec The vector to subtract
+     * @return {Vector2}
      */
     subtract(vec) {
-        return new Vector2f(this.x-vec.x, this.y-vec.y);
+        return new Vector2(this.x-vec.x, this.y-vec.y);
     }
 
     /**
      * Scales this vector by a constant
      * @param {number} a The scaling constant
-     * @return {Vector2f}
+     * @return {Vector2}
      */
     scale(a) {
-        return new Vector2f(this.x*a, this.y*a);
+        return new Vector2(this.x*a, this.y*a);
     }
 
 }
 
-module.exports = Vector2f;
+module.exports = Vector2;

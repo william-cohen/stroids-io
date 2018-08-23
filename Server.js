@@ -47,9 +47,11 @@ io.on('connection', function(socket) {
         console.log('Player (id: ' + socket.id + ') left.');
     });
 });
-
+let lastUpdate = Date.now();
 setInterval(function () {
-    game.update();
+    let delta = (Date.now() - lastUpdate)/1000;
+    game.update(delta);
+    lastUpdate = Date.now();
     game.emit(getServerTime());
 }, 1000.0 / TICK_RATE);
 

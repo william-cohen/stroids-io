@@ -1,12 +1,12 @@
 /* global Image */
-const Vector2f = require('./Vector2f');
+const Vector2 = require('./Vector2');
 
 class Enemy {
     constructor(id, username) {
         this.id = id;
         this.username = username;
-        this.pos = new Vector2f(0.0, 0.0);
-        this.vel = new Vector2f(0.0, 0.0);
+        this.pos = new Vector2(0.0, 0.0);
+        this.vel = new Vector2(0.0, 0.0);
         this.sprite = new Image();
         this.sprite.src = 'img/player.png';
         this.spriteT = new Image();
