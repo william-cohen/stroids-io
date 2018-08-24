@@ -29,14 +29,14 @@ class Enemy {
         this.alive = state.alive;
     }
 
-    update() {
+    update(delta) {
         if (!this.alive) return;
 
         this.tick++;
         this.tick %= 6;
 
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
+        this.pos.x += this.vel.x*delta;
+        this.pos.y += this.vel.y*delta;
     }
 
     draw(ctx) {

@@ -43,24 +43,24 @@ socket.on('message', function(text) {
 
 socket.on('state', function(state) {
     leaderID = state.leader;
-    let player_state = state.player;
-    let enemy_states = state.enemies || []; //
+    let playerState = state.player;
+    let enemyStates = state.enemies || []; //
     let removedEnemies = state.removedPlayers;
     let addedPlayers = state.addedPlayers;
     let updatedAsteroids = state.updatedAsteroids;
 
     //Update player state
-    player.setState(player_state);
+    player.setState(playerState);
     player.score = state.score;
 
     //Update enemies state
-    for (let i = 0; i < enemy_states.length; i++) {
-        let enemy_state = enemy_states[i];
-        let enemy_id = enemy_state.id;
+    for (let i = 0; i < enemyStates.length; i++) {
+        let enemyState = enemyStates[i];
+        let enemy_id = enemyState.id;
         if (!enemies.has(enemy_id)) {
             enemies.set(enemy_id, new Enemy(enemy_id, ''));
         }
-        enemies.get(enemy_id).setState(enemy_state);
+        enemies.get(enemy_id).setState(enemyState);
     }
 
     //Remove enemies who left since last tick
@@ -89,7 +89,7 @@ function update(delta) {
     Latency.update();
 
     for (let i = 0; i < enemies.length; i++) {
-        enemies[i].update();
+        enemies[i].update(delta);
     }
 
     for (let i = 0; i < asteroids.length; i++) {
