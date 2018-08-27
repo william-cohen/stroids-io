@@ -43,22 +43,21 @@ class Latency {
 
 
 
-    calc(times) {
+    calc() {
         this.count %= 10;
-        let lag = times.server-times.client;
+        let lag = (Date.now() - this.lastDrip)/2;
         let mean = this.getMean();
         let sd = this.getSd(mean);
 
-        if (this.data.length < 5 || Math.abs(mean - lag) < 2*sd) {
+        if (this.data.length < 10 || Math.abs(mean - lag) < 2*sd) {
             this.data[this.count++] = lag;
         }
     }
 
     update() {
         if (this.tick == 1) {
-            let time = Date.now();
-            this.socket.emit('drip', time);
-            this.lastDrip = time;
+            this.socket.emit('drip');
+            this.lastDrip = Date.now();
         } else if(this.tick == 2) {
             this.currentLatency = Math.round(this.getMean());
         }

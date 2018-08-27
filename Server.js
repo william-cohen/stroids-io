@@ -23,11 +23,8 @@ function getServerTime() {
 }
 
 io.on('connection', function(socket) {
-    socket.on('drip', function(clientTime) {
-        socket.emit('drop', {
-            client: clientTime,
-            server: Date.now()
-        });
+    socket.on('drip', function() {
+        socket.emit('drop');
     });
 
     //Player joins (or rejoins) the game
@@ -48,11 +45,16 @@ io.on('connection', function(socket) {
     });
 });
 let lastUpdate = Date.now();
+//let tick = 0;
 setInterval(function () {
     let delta = (Date.now() - lastUpdate)/1000;
     game.update(delta);
     lastUpdate = Date.now();
+
+    //if (tick % 2 == 0) game.emit(getServerTime());
     game.emit(getServerTime());
+
+    //tick++; tick %= 30;
 }, 1000.0 / TICK_RATE);
 
 console.log('Game server running on port: ' + PORT + '...');

@@ -33,8 +33,8 @@ for (var i = 0; i < numStars; i++) {
     stars.push(new Star(1, GAME_SIZE, GAME_SIZE, player));
 }
 
-socket.on('drop', function(times) {
-    Latency.calc(times);
+socket.on('drop', function() {
+    Latency.calc();
 });
 
 socket.on('message', function(text) {
