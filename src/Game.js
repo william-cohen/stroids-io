@@ -50,7 +50,7 @@ socket.on('state', function(state) {
     let updatedAsteroids = state.updatedAsteroids;
 
     //Update player state
-    player.setState(playerState);
+    player.updateState(playerState);
     player.score = state.score;
 
     //Update enemies state
@@ -60,7 +60,7 @@ socket.on('state', function(state) {
         if (!enemies.has(enemy_id)) {
             enemies.set(enemy_id, new Enemy(enemy_id, ''));
         }
-        enemies.get(enemy_id).setState(enemyState);
+        enemies.get(enemy_id).updateState(enemyState);
     }
 
     //Remove enemies who left since last tick
@@ -160,4 +160,4 @@ setInterval(function() {
     draw();
 }, 1000/FPS);
 
-console.log('Client v0.1.8');
+console.log('Client v0.2.0');

@@ -45,16 +45,16 @@ io.on('connection', function(socket) {
     });
 });
 let lastUpdate = Date.now();
-//let tick = 0;
+let tick = 0;
 setInterval(function () {
     let delta = (Date.now() - lastUpdate)/1000;
     game.update(delta);
     lastUpdate = Date.now();
 
-    //if (tick % 2 == 0) game.emit(getServerTime());
-    game.emit(getServerTime());
+    //XXX network tickrate
+    if (tick % 5 == 0) game.emit(getServerTime());
 
-    //tick++; tick %= 30;
+    tick++; tick %= 30;
 }, 1000.0 / TICK_RATE);
 
 console.log('Game server running on port: ' + PORT + '...');

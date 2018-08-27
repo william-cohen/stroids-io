@@ -9,8 +9,8 @@ const x1 = new Vector2(40, 30);
 const v1 = new Vector2(10, 10);
 
 
-for (let i = 0; i < 60; i++) {
-    let t = i/60;
+for (let i = 0; i < 6; i++) {
+    let t = i/6;
     let p = lerp(x0, v0, x1, v1, t);
     let dat = p.x + ', ' + p.y + '\n';
 

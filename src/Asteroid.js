@@ -1,5 +1,5 @@
 /* global Image */
-const Vector2 = require('./Vector2');
+const Vector2 = require('../util/Vector2');
 
 class Asteroid {
     constructor(size) {

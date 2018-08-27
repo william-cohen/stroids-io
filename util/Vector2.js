@@ -55,6 +55,14 @@ class Vector2f {
         return new Vector2f(this.x*a, this.y*a);
     }
 
+    /**
+     * Clones this current vector
+     * @return {Vector2f}
+     */
+    clone() {
+        return new Vector2f(this.x, this.y);
+    }
+
 }
 
 module.exports = Vector2f;
