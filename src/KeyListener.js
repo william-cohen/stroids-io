@@ -1,8 +1,9 @@
+/* global document */
 class KeyListener {
     constructor() {
         this.pressedKeys = [];
-        document.addEventListener("keydown", this.keydown.bind(this));
-        document.addEventListener("keyup", this.keyup.bind(this));
+        document.addEventListener('keydown', this.keydown.bind(this));
+        document.addEventListener('keyup', this.keyup.bind(this));
     }
 
     keydown(e) {
