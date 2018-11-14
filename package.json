@@ -4,7 +4,9 @@
   "description": "A sample socket io server",
   "main": "sio-server.js",
   "scripts": {
-    "start": "xdg-open http://localhost:3000 & node Server.js",
+    "start": "node Server.js",
+    "test": "node Test.js",
+    "demo": "npm build && xdg-open http://127.0.0.1:3000 && node Server.js ",
     "babel": "babel --presets es2015 js/game.js -o build/game.bundle.js",
     "webpack": "webpack"
   },
