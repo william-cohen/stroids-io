@@ -1,5 +1,5 @@
 /* global window, document, io, prompt */
-const CONNECTION = 'http://127.0.0.1:3000';
+const CONNECTION = process.env.SERVER_URL + ':' + process.env.PORT;
 const GAME_SIZE = 1000;
 const CANVAS_WIDTH = 0.95 * window.innerWidth;
 const CANVAS_HEIGHT = 0.95 * window.innerHeight;

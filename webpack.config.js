@@ -1,5 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
+var Dotenv = require('dotenv-webpack');
+
 
 module.exports = {
     mode: 'production',
@@ -22,5 +24,8 @@ module.exports = {
     stats: {
         colors: true
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    plugins: [
+        new Dotenv()
+    ]
 };
