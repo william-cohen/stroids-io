@@ -17,7 +17,7 @@ install:
     - npm install
     - npm run build
 script:
-    - sudo npm run start
+    - npm run start
 deploy:
   provider: script
   skip_cleanup: true
