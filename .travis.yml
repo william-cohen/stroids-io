@@ -1,19 +1,26 @@
 sudo: required
 dist: trusty
 addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+  ssh_known_hosts: stroids.io
 language: node_js
 node_js:
   - "10"
 env:
     - PORT=80
     - SERVER_URL=http://stroids.io
+before_deploy:
+    - openssl aes-256-cbc -K $encrypted_<...>_key -iv $encrypted_<...>_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
+    - eval "$(ssh-agent -s)"
+    - chmod 600 /tmp/deploy_rsa
+    - ssh-add /tmp/deploy_rsa
 install:
     - npm install
     - npm run build
 script:
-    - npm run start
+    - sudo npm run start
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/. root@stroids.io:stroids-io
+  on:
+    branch: master
