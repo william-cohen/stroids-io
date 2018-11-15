@@ -7,7 +7,6 @@ node_js:
   - "10"
 env:
     - PORT=80
-    - SERVER_URL=http://stroids.io
 before_deploy:
     - openssl aes-256-cbc -K $encrypted_<...>_key -iv $encrypted_<...>_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
     - eval "$(ssh-agent -s)"
