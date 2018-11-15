@@ -16,7 +16,7 @@ install:
     - npm install
     - npm run build
 script:
-    - node Server.js &
+    - npm run start
 deploy:
   provider: script
   skip_cleanup: true
