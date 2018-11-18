@@ -8,6 +8,7 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 const ctx = canvas.getContext('2d');
 
+const io = require('socket.io-client');
 const socket = io(CONNECTION);
 
 const Player = require('./Player');
@@ -33,8 +34,9 @@ for (var i = 0; i < numStars; i++) {
     stars.push(new Star(1, GAME_SIZE, GAME_SIZE, player));
 }
 
-socket.on('drop', function() {
-    Latency.calc();
+socket.on('pong', function(ms) {
+    Latency.calc(ms);
+    console.log('Pong: ' + ms);
 });
 
 socket.on('message', function(text) {
@@ -86,7 +88,6 @@ socket.on('state', function(state) {
 });
 
 function update(delta) {
-    Latency.update();
 
     for (let i = 0; i < enemies.length; i++) {
         enemies[i].update(delta);
@@ -160,4 +161,4 @@ setInterval(function() {
     draw();
 }, 1000/FPS);
 
-console.log('Client v0.2.0');
+console.log('Client v0.2.2');
