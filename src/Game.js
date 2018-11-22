@@ -152,7 +152,7 @@ function draw() {
     }
 }
 
-const FPS = 30;
+const FPS = 60;
 let lastUpdate = Date.now();
 setInterval(function() {
     let delta = (Date.now() - lastUpdate)/1000;

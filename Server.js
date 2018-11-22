@@ -9,7 +9,7 @@ const express = require('express');
 const http = require('http');
 const app = express();
 const server = http.createServer(app).listen(PORT);
-const io = require('socket.io')(server, {pingInterval: 2000});
+const io = require('socket.io')(server, {pingInterval: 1000});
 
 const Game = require('./lib/Game');
 
