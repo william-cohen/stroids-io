@@ -10,14 +10,27 @@ class Player {
         this.id = 'null';
 
         this.alive = true;
+        this.thrust = false;
 
         this.pos = new Vector2(0.0, 0.0);
         this.vel = new Vector2(0.0, 0.0);
 
         this.rotation = 0.0;
         this.keys = new KeyListener();
-        this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures['player.png']);
+
+        let frames = [
+            PIXI.loader.resources['assets/spritesheet.json'].textures['player.png'],
+            PIXI.loader.resources['assets/spritesheet.json'].textures['playerT.png'],
+            PIXI.loader.resources['assets/spritesheet.json'].textures['playerT2.png']
+        ];
+        this.sprite = new PIXI.extras.AnimatedSprite(frames);
         this.sprite.anchor.set(0.5);
+        this.sprite.animationSpeed = 0.2;
+        this.sprite.onLoop = () => {
+            console.log('LOOPY LOOPY');
+            this.sprite.gotoAndPlay(1);
+        };
+        this.sprite.play();
     }
 
     updateState(state) {
@@ -43,7 +56,7 @@ class Player {
         };
         this.tick++; this.tick %= 30;
         if (this.alive) {
-            this.thrusting = false;
+            this.thrust = false;
 
             this.tick++;
             this.tick %= 30;
@@ -63,7 +76,7 @@ class Player {
             //Up Arrow Key
             if (this.keys.isPressed(38) || this.keys.isPressed(32)) {
                 input.W = true;
-                this.thrusting = true;
+                this.thrust = true;
                 thrust.x = 30.0 * Math.cos(this.rotation);
                 thrust.y = 30.0 * Math.sin(this.rotation);
             }
@@ -76,6 +89,11 @@ class Player {
 
     draw() {
         if (!this.alive) return;
+        if (!this.thrust) {
+            this.sprite.gotoAndStop(0);
+        } else {
+            this.sprite.play();
+        }
         this.sprite.x = this.pos.x;
         this.sprite.y = this.pos.y;
 
