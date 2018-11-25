@@ -16,12 +16,8 @@ class Player {
 
         this.rotation = 0.0;
         this.keys = new KeyListener();
-        this.sprite = new Image();
-        this.sprite.src = 'img/player.png';
-        this.spriteT = new Image();
-        this.spriteT.src = 'img/playerT.png';
-        this.spriteT2 = new Image();
-        this.spriteT2.src = 'img/playerT2.png';
+        this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures['player.png']);
+        this.sprite.anchor.set(0.5);
     }
 
     updateState(state) {
@@ -32,6 +28,9 @@ class Player {
         this.vel.y = state.vy;
         this.rotation = state.rotation;
         this.alive = state.alive;
+
+        //XXX
+        if (!this.alive) this.sprite.visible = false;
     }
 
     update(delta) {
@@ -75,25 +74,12 @@ class Player {
         this.pos = this.pos.add(this.vel);
     }
 
-    draw(ctx) {
+    draw() {
         if (!this.alive) return;
+        this.sprite.x = this.pos.x;
+        this.sprite.y = this.pos.y;
 
-        //let p = lerp()
-
-        ctx.save();
-        ctx.translate(this.pos.x, this.pos.y);
-        ctx.rotate(this.rotation + Math.PI / 2);
-        ctx.translate(-this.pos.x, -this.pos.y);
-        if (this.thrusting) {
-            if (this.tick%10 > 5) {
-                ctx.drawImage(this.spriteT, this.pos.x - 19, this.pos.y - 24);
-            } else {
-                ctx.drawImage(this.spriteT2, this.pos.x - 19, this.pos.y - 24);
-            }
-        } else {
-            ctx.drawImage(this.sprite, this.pos.x - 19, this.pos.y - 24);
-        }
-        ctx.restore();
+        this.sprite.rotation = this.rotation + Math.PI/2;
     }
 }
 

@@ -3,36 +3,79 @@ const CONNECTION = process.env.SERVER_URL + ':' + process.env.PORT;
 const GAME_SIZE = 1000;
 const CANVAS_WIDTH = 0.95 * window.innerWidth;
 const CANVAS_HEIGHT = 0.95 * window.innerHeight;
-const canvas = document.getElementById('gameCanvas');
-canvas.width = CANVAS_WIDTH;
-canvas.height = CANVAS_HEIGHT;
-const ctx = canvas.getContext('2d');
+
+const PIXI = require('pixi.js');
+const Viewport = require('pixi-viewport');
+
+//Create a Pixi Application
+const app = new PIXI.Application({
+    width: CANVAS_WIDTH,         // default: 800
+    height: CANVAS_HEIGHT,        // default: 600
+    antialias: true,    // default: false
+    transparent: false, // default: false
+    resolution: 1       // default: 1
+  }
+);
+
+const camera = new Viewport({
+    screenWidth: CANVAS_WIDTH,
+    screenHeight: CANVAS_HEIGHT,
+    worldWidth: 1000,
+    worldHeight: 1000,
+    interaction: app.renderer.interaction
+});
+
+const gui = new Viewport({
+    screenWidth: CANVAS_WIDTH,
+    screenHeight: CANVAS_HEIGHT,
+    worldWidth: 1000,
+    worldHeight: 1000
+});
+
+//Add the canvas that Pixi automatically created for you to the HTML document
+document.body.appendChild(app.view);
+app.stage.addChild(camera);
+app.stage.addChild(gui);
+
+// activate plugins
+camera
+    .drag()
+    .pinch()
+    .wheel()
+    .decelerate();
+
 
 const io = require('socket.io-client');
 const socket = io(CONNECTION);
 
-const Player = require('./Player');
-const Enemy = require('./Enemy');
-const Asteroid = require('./Asteroid');
 const HashMap = require('./hashmap');
-const Star = require('./Star');
+
+const Player = require('./Player');
+const Enemy = require('./Enemy'); //FIXME
+const Asteroid = require('./Asteroid');
+const Star = require('./Star'); //FIXME
 const Latency = require('./Latency').init(socket);
 
 const username = prompt('Please enter a username: ');
+const graphics = new PIXI.Graphics();
 
-socket.emit('join', username);
-
-let player = new Player(socket);
-let enemies = new HashMap();
-let asteroids = [];
+let player = null;
+let enemies = null;
+let asteroids = null;
 let leaderID = '';
-let stars = [];
-let numStars = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000018);
-for (var i = 0; i < numStars; i++) {
-    stars.push(new Star(3, GAME_SIZE, GAME_SIZE, player));
-    stars.push(new Star(2, GAME_SIZE, GAME_SIZE, player));
-    stars.push(new Star(1, GAME_SIZE, GAME_SIZE, player));
-}
+let stars = null;
+let numStars = null;
+
+// PIXI.loader
+//   .add('img/player.png')
+//   .add('img/leader.png')
+//   .add('img/rock1.png')
+//   .add('img/rock2.png')
+//   .add('img/rock3.png')
+//   .load(setup);
+PIXI.loader
+  .add('assets/spritesheet.json')
+  .load(setup);
 
 socket.on('pong', function(ms) {
     Latency.calc(ms);
@@ -81,22 +124,50 @@ socket.on('state', function(state) {
     for (let i = 0; i < updatedAsteroids.length; i++) {
         let asteroidInfo = updatedAsteroids[i];
         let id = asteroidInfo.id;
-        if (asteroids[id] == null) asteroids[id] = new Asteroid(id%3+1);
+        if (asteroids[id] == null) {
+            asteroids[id] = new Asteroid(id%3+1);
+            camera.addChild(asteroids[id].sprite);
+        }
         asteroids[id].setState(asteroidInfo);
     }
 
 });
 
-function update(delta) {
+function setup() {
+    camera.addChild(graphics);
 
-    for (let i = 0; i < enemies.length; i++) {
-        enemies[i].update(delta);
+    player = new Player(socket);
+    camera.addChild(player.sprite);
+    camera.follow(player.sprite);
+
+    enemies = new HashMap();
+    asteroids = [];
+    leaderID = '';
+    stars = [];
+    const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.00009);
+    for (var i = 0; i < NUM_STARS; i++) {
+        stars.push(new Star(3, GAME_SIZE, GAME_SIZE, player));
+        stars.push(new Star(2, GAME_SIZE, GAME_SIZE, player));
+        stars.push(new Star(1, GAME_SIZE, GAME_SIZE, player));
     }
 
+    setInterval(function() {
+        let delta = (Date.now() - lastUpdate)/1000;
+        update(delta);
+        lastUpdate = Date.now();
+        draw();
+    }, 1000/FPS);
+}
+
+function update(delta) {
+
+    // for (let i = 0; i < enemies.length; i++) {
+    //     enemies[i].update(delta);
+    // }
+    //
     for (let i = 0; i < asteroids.length; i++) {
         asteroids[i].update(delta);
     }
-
 
     if (!player.alive) return;
     for (let i = 0; i < stars.length; i++) {
@@ -108,57 +179,41 @@ function update(delta) {
 function draw() {
     if (player == null) return;
 
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    graphics.clear();
 
-    ctx.setTransform(1, 0, 0, 1, CANVAS_WIDTH / 2 - player.pos.x, CANVAS_HEIGHT / 2 - player.pos.y);
+    graphics.lineStyle(2, 0xffffff, 1);
+    graphics.drawRect(0, 0, GAME_SIZE, GAME_SIZE);
+    graphics.endFill();
 
-    ctx.strokeStyle = 'white';
-    ctx.strokeRect(0,0, GAME_SIZE, GAME_SIZE);
-
+    graphics.beginFill(0xffffff);
+    graphics.lineStyle(0, 0x0, 0);
     for (let i = 0; i < stars.length; i++) {
-        stars[i].draw(ctx);
+        stars[i].draw(graphics);
     }
+    graphics.endFill();
 
-    let enemyArray = enemies.values();
-    for (let i = 0; i < enemyArray.length; i++) {
-        enemyArray[i].draw(ctx);
-    }
-
+    //
+    // let enemyArray = enemies.values();
+    // for (let i = 0; i < enemyArray.length; i++) {
+    //     enemyArray[i].draw();
+    // }
+    //
     for (let i = 0; i < asteroids.length; i++) {
         if (asteroids[i] == null) continue;
-        asteroids[i].draw(ctx);
+        asteroids[i].draw();
     }
 
-    if (player.alive) player.draw(ctx);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (player.alive) player.draw();
 
-    ctx.font = '12px serif';
-    ctx.fillStyle = 'white';
-    ctx.fillText('Ping: ' + Latency.currentLatency, CANVAS_WIDTH - 100, 10);
-
-    ctx.font = '14px serif';
-    ctx.fillStyle = 'white';
-    ctx.fillText('Score: ' + player.score, 20, 20);
-
-    ctx.font = '24px serif';
-    ctx.fillStyle = 'white';
-    let leaderText = (leaderID == player.id ? 'You are the leader.' : 'Leader: ' + (enemies.get(leaderID) || {username: ' '}).username);
-    ctx.fillText(leaderText, CANVAS_WIDTH/2 - 50, 20);
 
     if (!player.alive) {
-        ctx.font = '32px serif';
-        ctx.fillStyle = 'white';
-        ctx.fillText('You died.', 50, 150);
+        //Display death message
     }
 }
 
-const FPS = 60;
+socket.emit('join', username);
+
+const FPS = 30;
 let lastUpdate = Date.now();
-setInterval(function() {
-    let delta = (Date.now() - lastUpdate)/1000;
-    update(delta);
-    lastUpdate = Date.now();
-    draw();
-}, 1000/FPS);
 
 console.log('Client v0.2.2');
