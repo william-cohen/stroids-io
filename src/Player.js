@@ -27,7 +27,6 @@ class Player {
         this.sprite.anchor.set(0.5);
         this.sprite.animationSpeed = 0.2;
         this.sprite.onLoop = () => {
-            console.log('LOOPY LOOPY');
             this.sprite.gotoAndPlay(1);
         };
         this.sprite.play();

@@ -66,13 +66,6 @@ let leaderID = '';
 let stars = null;
 let numStars = null;
 
-// PIXI.loader
-//   .add('img/player.png')
-//   .add('img/leader.png')
-//   .add('img/rock1.png')
-//   .add('img/rock2.png')
-//   .add('img/rock3.png')
-//   .load(setup);
 PIXI.loader
   .add('assets/spritesheet.json')
   .load(setup);
@@ -110,14 +103,19 @@ socket.on('state', function(state) {
 
     //Remove enemies who left since last tick
     for (let i = 0; i < removedEnemies.length; i++) {
-        enemies.delete(removedEnemies[i]);
+        let removedEnemy = enemies.get(removedEnemies[i]);
+        removedEnemy.removeFrom(camera);
+        enemies.delete(removedEnemy.id);
     }
 
     //Create player objects and mark with ID
     for (let i = 0; i < addedPlayers.length; i++) {
         let newPlayerInfo = addedPlayers[i];
         if (newPlayerInfo.id == player.id) continue;
-        enemies.set(newPlayerInfo.id, new Enemy(newPlayerInfo.id, newPlayerInfo.username));
+        let newEnemy = new Enemy(newPlayerInfo.id, newPlayerInfo.username);
+        enemies.set(newPlayerInfo.id, newEnemy);
+        newEnemy.insertInto(camera);
+
     }
 
     //Create/update Asteroids as nessesary
@@ -161,10 +159,10 @@ function setup() {
 
 function update(delta) {
 
-    // for (let i = 0; i < enemies.length; i++) {
-    //     enemies[i].update(delta);
-    // }
-    //
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].update(delta);
+    }
+
     for (let i = 0; i < asteroids.length; i++) {
         asteroids[i].update(delta);
     }
@@ -192,12 +190,11 @@ function draw() {
     }
     graphics.endFill();
 
-    //
-    // let enemyArray = enemies.values();
-    // for (let i = 0; i < enemyArray.length; i++) {
-    //     enemyArray[i].draw();
-    // }
-    //
+    let enemyArray = enemies.values();
+    for (let i = 0; i < enemyArray.length; i++) {
+        enemyArray[i].draw();
+    }
+
     for (let i = 0; i < asteroids.length; i++) {
         if (asteroids[i] == null) continue;
         asteroids[i].draw();
