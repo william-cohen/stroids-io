@@ -4,10 +4,11 @@ const KeyListener = require('./KeyListener');
 const Vector2 = require('../util/Vector2');
 
 class Player {
-    constructor(socket) {
+    constructor(socket, controller) {
         this.tick = 0;
         this.socket = socket;
         this.id = 'null';
+        this.controller = controller;
 
         this.alive = true;
         this.thrust = false;
@@ -61,19 +62,19 @@ class Player {
             this.tick %= 30;
 
             //Left Arrow Key
-            if (this.keys.isPressed(37)) {
+            if (this.keys.isPressed(37) || this.controller.input.A) {
                 input.A = true;
                 //
                 this.rotation -= 3.0 * delta;
             }
             //Right Arrow Key
-            if (this.keys.isPressed(39)) {
+            if (this.keys.isPressed(39) || this.controller.input.D) {
                 input.D = true;
                 //
                 this.rotation += 3.0 * delta;
             }
             //Up Arrow Key
-            if (this.keys.isPressed(38) || this.keys.isPressed(32)) {
+            if (this.keys.isPressed(38) || this.keys.isPressed(32) || this.controller.input.W) {
                 input.W = true;
                 this.thrust = true;
                 thrust.x = 30.0 * Math.cos(this.rotation);

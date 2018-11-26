@@ -1,7 +1,7 @@
 'use strict';
 
 class UIOverlay {
-    constructor(canvasWidth, canvasHeight) {
+    constructor(canvasWidth, canvasHeight, mobile) {
         this.leaderText = new PIXI.Text(
             'Leader: ',
             UIOverlay.LeaderTextStyle

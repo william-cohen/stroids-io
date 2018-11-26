@@ -6,6 +6,8 @@ const CANVAS_HEIGHT = 0.95 * window.innerHeight;
 
 const PIXI = require('pixi.js');
 const Viewport = require('pixi-viewport');
+const MOBILE = require('is-mobile')();
+
 
 WebFont.load({
     google: {
@@ -43,18 +45,21 @@ document.body.appendChild(app.view);
 app.stage.addChild(camera);
 app.stage.addChild(gui);
 
-// activate plugins
-camera
-    .drag()
-    .pinch()
-    .wheel()
-    .decelerate();
+// activate plugins if not on mobile
+if (!MOBILE)
+    camera
+        .drag()
+        .pinch()
+        .wheel()
+        .decelerate();
 
 
 const io = require('socket.io-client');
 const socket = io(CONNECTION);
 
 const HashMap = require('./hashmap');
+
+const MobileControls = require('./mobile/MobileControls');
 
 const UIOverlay = require('./UIOverlay'); //FIXME
 const Player = require('./Player');
@@ -73,6 +78,7 @@ let leaderID = '';
 let stars = null;
 let numStars = null;
 let ui = null;
+let mobileControls = null;
 
 PIXI.loader
   .add('assets/spritesheet.json')
@@ -81,10 +87,14 @@ PIXI.loader
 function setup() {
     camera.addChild(graphics);
 
-    ui = new UIOverlay(CANVAS_WIDTH, CANVAS_HEIGHT);
+    ui = new UIOverlay(CANVAS_WIDTH, CANVAS_HEIGHT, MOBILE);
     ui.insertInto(gui);
 
-    player = new Player(socket);
+    //FIXME DO THE CONTROLLER/KEYBOARD REFACTORING
+    mobileControls = new MobileControls(CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (MOBILE) mobileControls.insertInto(gui);
+
+    player = new Player(socket, mobileControls);
     camera.addChild(player.sprite);
     camera.follow(player.sprite);
 
@@ -190,6 +200,7 @@ function update(delta) {
     }
 
     for (let i = 0; i < asteroids.length; i++) {
+        if (asteroids[i] == null) continue;
         asteroids[i].update(delta);
     }
 
