@@ -56,8 +56,9 @@ const socket = io(CONNECTION);
 
 const HashMap = require('./hashmap');
 
+const UIOverlay = require('./UIOverlay'); //FIXME
 const Player = require('./Player');
-const Enemy = require('./Enemy'); //FIXME
+const Enemy = require('./Enemy');
 const Asteroid = require('./Asteroid');
 const Star = require('./Star'); //FIXME
 const Latency = require('./Latency').init(socket);
@@ -71,6 +72,7 @@ let asteroids = null;
 let leaderID = '';
 let stars = null;
 let numStars = null;
+let ui = null;
 
 PIXI.loader
   .add('assets/spritesheet.json')
@@ -78,6 +80,9 @@ PIXI.loader
 
 function setup() {
     camera.addChild(graphics);
+
+    ui = new UIOverlay(CANVAS_WIDTH, CANVAS_HEIGHT);
+    ui.insertInto(gui);
 
     player = new Player(socket);
     camera.addChild(player.sprite);
@@ -97,7 +102,7 @@ function setup() {
     //Seup network event listeners (probably should refactor this)
     socket.on('pong', function(ms) {
         Latency.calc(ms);
-        console.log('Pong: ' + ms);
+        ui.setPing(ms);
     });
 
     socket.on('message', function(text) {
@@ -115,6 +120,7 @@ function setup() {
         //Update player state
         player.updateState(playerState);
         player.score = state.score;
+        ui.setScore(player.score);
 
         //Update enemies state
         for (let i = 0; i < enemyStates.length; i++) {
@@ -154,6 +160,16 @@ function setup() {
             asteroids[id].setState(asteroidInfo);
         }
 
+        //Update name of leader (possible bug if leaderID not found?)
+        if (player.alive) {
+            if (leaderID == player.id) {
+                ui.setLeaderText('You are the leader!');
+            } else {
+                let leaderName = enemies.get(leaderID);
+                ui.setLeaderText('Leader: ' + leaderName);
+            }
+        }
+
     });
 
 
@@ -185,7 +201,7 @@ function update(delta) {
 }
 
 function draw() {
-    if (player == null) return;
+    // if (player == null) return;
 
     graphics.clear();
 
@@ -214,7 +230,7 @@ function draw() {
 
 
     if (!player.alive) {
-        //Display death message
+        ui.notifyOfDeath();
     }
 }
 
@@ -223,4 +239,4 @@ socket.emit('join', username);
 const FPS = 30;
 let lastUpdate = Date.now();
 
-console.log('Client v0.2.2');
+console.log('Stroids Client v0.3.2');

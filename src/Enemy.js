@@ -1,9 +1,12 @@
+'use strict';
+
 /* global Image */
 const Vector2 = require('../util/Vector2');
 const hspline = require('../util/HermiteSpline');
 const Util = require('../util/Util');
 
 class Enemy {
+
     constructor(id, username) {
         this.id = id;
         this.username = username;
@@ -33,12 +36,7 @@ class Enemy {
 
         this.nametag = new PIXI.Text(
             this.username,
-            new PIXI.TextStyle({
-                fontFamily: 'Press Start 2P',
-                fontSize: 8,
-                fill: 'white',
-                align: 'center'
-            })
+            Enemy.NameStyle
         );
         this.nametag.anchor.set(0.5);
     }
@@ -101,8 +99,15 @@ class Enemy {
 
         this.sprite.rotation = angle + Math.PI/2;
 
-        this.nametag.position.set(p.x, p.y + 30); //TUNE
+        this.nametag.position.set(p.x, p.y + 30);
     }
 }
+
+Enemy.NameStyle = new PIXI.TextStyle({
+    fontFamily: 'Press Start 2P',
+    fontSize: 8,
+    fill: 'white',
+    align: 'center'
+});
 
 module.exports = Enemy;
