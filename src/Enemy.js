@@ -1,9 +1,12 @@
+'use strict';
+
 /* global Image */
 const Vector2 = require('../util/Vector2');
-const lerp = require('../util/HermiteSpline');
+const hspline = require('../util/HermiteSpline');
 const Util = require('../util/Util');
 
 class Enemy {
+
     constructor(id, username) {
         this.id = id;
         this.username = username;
@@ -16,15 +19,36 @@ class Enemy {
         this.oldRotation = 0.0;
         this.lerp_t = 0;
 
-        this.sprite = new Image();
-        this.sprite.src = 'img/player.png';
-        this.spriteT = new Image();
-        this.spriteT.src = 'img/playerT.png';
-        this.spriteT2 = new Image();
-        this.spriteT2.src = 'img/playerT2.png';
-        this.tick = 0;
+        let frames = [
+            PIXI.loader.resources['assets/spritesheet.json'].textures['player.png'],
+            PIXI.loader.resources['assets/spritesheet.json'].textures['playerT.png'],
+            PIXI.loader.resources['assets/spritesheet.json'].textures['playerT2.png']
+        ];
+        this.sprite = new PIXI.extras.AnimatedSprite(frames);
+        this.sprite.anchor.set(0.5);
+        this.sprite.animationSpeed = 0.2;
+        this.sprite.onLoop = () => {
+            this.sprite.gotoAndPlay(1);
+        };
+        this.sprite.play();
         this.thrust = false;
         this.alive = true;
+
+        this.nametag = new PIXI.Text(
+            this.username,
+            Enemy.NameStyle
+        );
+        this.nametag.anchor.set(0.5);
+    }
+
+    insertInto(camera) {
+        camera.addChild(this.sprite);
+        camera.addChild(this.nametag);
+    }
+
+    removeFrom(camera) {
+        camera.removeChild(this.sprite);
+        camera.removeChild(this.nametag);
     }
 
     updateState(state) {
@@ -37,8 +61,6 @@ class Enemy {
         this.pos.y = state.y;
         this.vel.x = state.vx;
         this.vel.y = state.vy;
-
-        console.log(this.pos);
 
         this.rotation = state.rotation;
         this.thrust = state.thrust;
@@ -62,29 +84,30 @@ class Enemy {
         this.lerp_t += 1.0/6.0;
 
         //Hermite Spline interpolation (very smooth)
-        let p = lerp(this.oldPos, this.oldVel, this.pos, this.vel, this.lerp_t);
+        let p = hspline(this.oldPos, this.oldVel, this.pos, this.vel, this.lerp_t);
         let angleDelta = Util.angleDelta(this.rotation, this.oldRotation);
         //Linear angle interpolation
         let angle = this.oldRotation + angleDelta*this.lerp_t;
 
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(angle + Math.PI/2);
-        ctx.translate(-p.x, -p.y);
-        if (this.thrust) {
-            if (this.tick > 2) {
-                ctx.drawImage(this.spriteT, p.x - 19, p.y - 24);
-            } else {
-                ctx.drawImage(this.spriteT2, p.x - 19, p.y - 24);
-            }
+        if (!this.thrust) {
+            this.sprite.gotoAndStop(0);
         } else {
-            ctx.drawImage(this.sprite, p.x - 19, p.y - 24);
+            this.sprite.play();
         }
-        ctx.restore();
-        ctx.font = '12px serif';
-        ctx.fillStyle = 'white';
-        ctx.fillText(this.username, p.x - 25, p.y + 45);
+        this.sprite.x = p.x;
+        this.sprite.y = p.y;
+
+        this.sprite.rotation = angle + Math.PI/2;
+
+        this.nametag.position.set(p.x, p.y + 30);
     }
 }
+
+Enemy.NameStyle = new PIXI.TextStyle({
+    fontFamily: 'Press Start 2P',
+    fontSize: 8,
+    fill: 'white',
+    align: 'center'
+});
 
 module.exports = Enemy;

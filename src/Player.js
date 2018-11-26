@@ -4,24 +4,33 @@ const KeyListener = require('./KeyListener');
 const Vector2 = require('../util/Vector2');
 
 class Player {
-    constructor(socket) {
+    constructor(socket, controller) {
         this.tick = 0;
         this.socket = socket;
         this.id = 'null';
+        this.controller = controller;
 
         this.alive = true;
+        this.thrust = false;
 
         this.pos = new Vector2(0.0, 0.0);
         this.vel = new Vector2(0.0, 0.0);
 
         this.rotation = 0.0;
         this.keys = new KeyListener();
-        this.sprite = new Image();
-        this.sprite.src = 'img/player.png';
-        this.spriteT = new Image();
-        this.spriteT.src = 'img/playerT.png';
-        this.spriteT2 = new Image();
-        this.spriteT2.src = 'img/playerT2.png';
+
+        let frames = [
+            PIXI.loader.resources['assets/spritesheet.json'].textures['player.png'],
+            PIXI.loader.resources['assets/spritesheet.json'].textures['playerT.png'],
+            PIXI.loader.resources['assets/spritesheet.json'].textures['playerT2.png']
+        ];
+        this.sprite = new PIXI.extras.AnimatedSprite(frames);
+        this.sprite.anchor.set(0.5);
+        this.sprite.animationSpeed = 0.2;
+        this.sprite.onLoop = () => {
+            this.sprite.gotoAndPlay(1);
+        };
+        this.sprite.play();
     }
 
     updateState(state) {
@@ -32,6 +41,9 @@ class Player {
         this.vel.y = state.vy;
         this.rotation = state.rotation;
         this.alive = state.alive;
+
+        //XXX
+        if (!this.alive) this.sprite.visible = false;
     }
 
     update(delta) {
@@ -44,27 +56,27 @@ class Player {
         };
         this.tick++; this.tick %= 30;
         if (this.alive) {
-            this.thrusting = false;
+            this.thrust = false;
 
             this.tick++;
             this.tick %= 30;
 
             //Left Arrow Key
-            if (this.keys.isPressed(37)) {
+            if (this.keys.isPressed(37) || this.controller.input.A) {
                 input.A = true;
                 //
                 this.rotation -= 3.0 * delta;
             }
             //Right Arrow Key
-            if (this.keys.isPressed(39)) {
+            if (this.keys.isPressed(39) || this.controller.input.D) {
                 input.D = true;
                 //
                 this.rotation += 3.0 * delta;
             }
             //Up Arrow Key
-            if (this.keys.isPressed(38) || this.keys.isPressed(32)) {
+            if (this.keys.isPressed(38) || this.keys.isPressed(32) || this.controller.input.W) {
                 input.W = true;
-                this.thrusting = true;
+                this.thrust = true;
                 thrust.x = 30.0 * Math.cos(this.rotation);
                 thrust.y = 30.0 * Math.sin(this.rotation);
             }
@@ -75,25 +87,17 @@ class Player {
         this.pos = this.pos.add(this.vel);
     }
 
-    draw(ctx) {
+    draw() {
         if (!this.alive) return;
-
-        //let p = lerp()
-
-        ctx.save();
-        ctx.translate(this.pos.x, this.pos.y);
-        ctx.rotate(this.rotation + Math.PI / 2);
-        ctx.translate(-this.pos.x, -this.pos.y);
-        if (this.thrusting) {
-            if (this.tick%10 > 5) {
-                ctx.drawImage(this.spriteT, this.pos.x - 19, this.pos.y - 24);
-            } else {
-                ctx.drawImage(this.spriteT2, this.pos.x - 19, this.pos.y - 24);
-            }
+        if (!this.thrust) {
+            this.sprite.gotoAndStop(0);
         } else {
-            ctx.drawImage(this.sprite, this.pos.x - 19, this.pos.y - 24);
+            this.sprite.play();
         }
-        ctx.restore();
+        this.sprite.x = this.pos.x;
+        this.sprite.y = this.pos.y;
+
+        this.sprite.rotation = this.rotation + Math.PI/2;
     }
 }
 

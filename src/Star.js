@@ -34,12 +34,8 @@ class Star {
         }
     }
 
-    draw(ctx) {
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, this.size, this.size);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-        ctx.closePath();
+    draw(g) {
+        g.drawRect(this.x, this.y, this.size, this.size);
     }
 }
 
