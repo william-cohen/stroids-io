@@ -33,8 +33,14 @@ class Enemy {
 
         this.nametag = new PIXI.Text(
             this.username,
-            new PIXI.TextStyle({fontFamily: 'Arial', fontSize: 12, fill: 'white'})
+            new PIXI.TextStyle({
+                fontFamily: 'Press Start 2P',
+                fontSize: 8,
+                fill: 'white',
+                align: 'center'
+            })
         );
+        this.nametag.anchor.set(0.5);
     }
 
     insertInto(camera) {
@@ -85,24 +91,6 @@ class Enemy {
         //Linear angle interpolation
         let angle = this.oldRotation + angleDelta*this.lerp_t;
 
-        // ctx.save();
-        // ctx.translate(p.x, p.y);
-        // ctx.rotate(angle + Math.PI/2);
-        // ctx.translate(-p.x, -p.y);
-        // if (this.thrust) {
-        //     if (this.tick > 2) {
-        //         ctx.drawImage(this.spriteT, p.x - 19, p.y - 24);
-        //     } else {
-        //         ctx.drawImage(this.spriteT2, p.x - 19, p.y - 24);
-        //     }
-        // } else {
-        //     ctx.drawImage(this.sprite, p.x - 19, p.y - 24);
-        // }
-        // ctx.restore();
-        // ctx.font = '12px serif';
-        // ctx.fillStyle = 'white';
-        // ctx.fillText(this.username, p.x - 25, p.y + 45);
-
         if (!this.thrust) {
             this.sprite.gotoAndStop(0);
         } else {
@@ -113,7 +101,7 @@ class Enemy {
 
         this.sprite.rotation = angle + Math.PI/2;
 
-        this.nametag.position.set(p.x - 25, p.y + 30); //TUNE
+        this.nametag.position.set(p.x, p.y + 30); //TUNE
     }
 }
 

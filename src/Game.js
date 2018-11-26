@@ -7,11 +7,17 @@ const CANVAS_HEIGHT = 0.95 * window.innerHeight;
 const PIXI = require('pixi.js');
 const Viewport = require('pixi-viewport');
 
+WebFont.load({
+    google: {
+      families: ['Press Start 2P']
+    }
+  });
+
 //Create a Pixi Application
 const app = new PIXI.Application({
     width: CANVAS_WIDTH,         // default: 800
     height: CANVAS_HEIGHT,        // default: 600
-    antialias: true,    // default: false
+    antialias: false,    // default: false
     transparent: false, // default: false
     resolution: 1       // default: 1
   }
@@ -70,67 +76,6 @@ PIXI.loader
   .add('assets/spritesheet.json')
   .load(setup);
 
-socket.on('pong', function(ms) {
-    Latency.calc(ms);
-    console.log('Pong: ' + ms);
-});
-
-socket.on('message', function(text) {
-    console.log('Message: ' + text);
-});
-
-socket.on('state', function(state) {
-    leaderID = state.leader;
-    let playerState = state.player;
-    let enemyStates = state.enemies || []; //
-    let removedEnemies = state.removedPlayers;
-    let addedPlayers = state.addedPlayers;
-    let updatedAsteroids = state.updatedAsteroids;
-
-    //Update player state
-    player.updateState(playerState);
-    player.score = state.score;
-
-    //Update enemies state
-    for (let i = 0; i < enemyStates.length; i++) {
-        let enemyState = enemyStates[i];
-        let enemy_id = enemyState.id;
-        if (!enemies.has(enemy_id)) {
-            enemies.set(enemy_id, new Enemy(enemy_id, ''));
-        }
-        enemies.get(enemy_id).updateState(enemyState);
-    }
-
-    //Remove enemies who left since last tick
-    for (let i = 0; i < removedEnemies.length; i++) {
-        let removedEnemy = enemies.get(removedEnemies[i]);
-        removedEnemy.removeFrom(camera);
-        enemies.delete(removedEnemy.id);
-    }
-
-    //Create player objects and mark with ID
-    for (let i = 0; i < addedPlayers.length; i++) {
-        let newPlayerInfo = addedPlayers[i];
-        if (newPlayerInfo.id == player.id) continue;
-        let newEnemy = new Enemy(newPlayerInfo.id, newPlayerInfo.username);
-        enemies.set(newPlayerInfo.id, newEnemy);
-        newEnemy.insertInto(camera);
-
-    }
-
-    //Create/update Asteroids as nessesary
-    for (let i = 0; i < updatedAsteroids.length; i++) {
-        let asteroidInfo = updatedAsteroids[i];
-        let id = asteroidInfo.id;
-        if (asteroids[id] == null) {
-            asteroids[id] = new Asteroid(id%3+1);
-            camera.addChild(asteroids[id].sprite);
-        }
-        asteroids[id].setState(asteroidInfo);
-    }
-
-});
-
 function setup() {
     camera.addChild(graphics);
 
@@ -149,12 +94,77 @@ function setup() {
         stars.push(new Star(1, GAME_SIZE, GAME_SIZE, player));
     }
 
+    //Seup network event listeners (probably should refactor this)
+    socket.on('pong', function(ms) {
+        Latency.calc(ms);
+        console.log('Pong: ' + ms);
+    });
+
+    socket.on('message', function(text) {
+        console.log('Message: ' + text);
+    });
+
+    socket.on('state', function(state) {
+        leaderID = state.leader;
+        let playerState = state.player;
+        let enemyStates = state.enemies || []; //
+        let removedEnemies = state.removedPlayers;
+        let addedPlayers = state.addedPlayers;
+        let updatedAsteroids = state.updatedAsteroids;
+
+        //Update player state
+        player.updateState(playerState);
+        player.score = state.score;
+
+        //Update enemies state
+        for (let i = 0; i < enemyStates.length; i++) {
+            let enemyState = enemyStates[i];
+            let enemy_id = enemyState.id;
+            if (!enemies.has(enemy_id)) {
+                enemies.set(enemy_id, new Enemy(enemy_id, ''));
+            }
+            enemies.get(enemy_id).updateState(enemyState);
+        }
+
+        //Remove enemies who left since last tick
+        for (let i = 0; i < removedEnemies.length; i++) {
+            let removedEnemy = enemies.get(removedEnemies[i]);
+            removedEnemy.removeFrom(camera);
+            enemies.delete(removedEnemy.id);
+        }
+
+        //Create player objects and mark with ID
+        for (let i = 0; i < addedPlayers.length; i++) {
+            let newPlayerInfo = addedPlayers[i];
+            if (newPlayerInfo.id == player.id) continue;
+            let newEnemy = new Enemy(newPlayerInfo.id, newPlayerInfo.username);
+            enemies.set(newPlayerInfo.id, newEnemy);
+            newEnemy.insertInto(camera);
+
+        }
+
+        //Create/update Asteroids as nessesary
+        for (let i = 0; i < updatedAsteroids.length; i++) {
+            let asteroidInfo = updatedAsteroids[i];
+            let id = asteroidInfo.id;
+            if (asteroids[id] == null) {
+                asteroids[id] = new Asteroid(id%3+1);
+                camera.addChild(asteroids[id].sprite);
+            }
+            asteroids[id].setState(asteroidInfo);
+        }
+
+    });
+
+
+    //Setup game loop
     setInterval(function() {
         let delta = (Date.now() - lastUpdate)/1000;
         update(delta);
         lastUpdate = Date.now();
         draw();
     }, 1000/FPS);
+
 }
 
 function update(delta) {
