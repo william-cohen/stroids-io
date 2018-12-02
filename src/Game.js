@@ -59,7 +59,8 @@ const socket = io(CONNECTION);
 
 const HashMap = require('./hashmap');
 
-const MobileControls = require('./mobile/MobileControls');
+const KeyboardControls = require('./controls/KeyboardControls');
+const MobileControls = require('./controls/MobileControls');
 
 const UIOverlay = require('./UIOverlay'); //FIXME
 const Player = require('./Player');
@@ -78,7 +79,7 @@ let leaderID = '';
 let stars = null;
 let numStars = null;
 let ui = null;
-let mobileControls = null;
+let playerControls = null;
 
 PIXI.loader
   .add('assets/spritesheet.json')
@@ -90,11 +91,14 @@ function setup() {
     ui = new UIOverlay(CANVAS_WIDTH, CANVAS_HEIGHT, MOBILE);
     ui.insertInto(gui);
 
-    //FIXME DO THE CONTROLLER/KEYBOARD REFACTORING
-    mobileControls = new MobileControls(CANVAS_WIDTH, CANVAS_HEIGHT);
-    if (MOBILE) mobileControls.insertInto(gui);
+    if (MOBILE) {
+        playerControls = new MobileControls(CANVAS_WIDTH, CANVAS_HEIGHT);
+        playerControls.insertInto(gui);
+    } else {
+        playerControls = new KeyboardControls();
+    }
 
-    player = new Player(socket, mobileControls);
+    player = new Player(socket, playerControls);
     camera.addChild(player.sprite);
     camera.follow(player.sprite);
 
@@ -102,7 +106,7 @@ function setup() {
     asteroids = [];
     leaderID = '';
     stars = [];
-    const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.00009);
+    const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000045);
     for (var i = 0; i < NUM_STARS; i++) {
         stars.push(new Star(3, GAME_SIZE, GAME_SIZE, player));
         stars.push(new Star(2, GAME_SIZE, GAME_SIZE, player));
@@ -139,6 +143,9 @@ function setup() {
             if (!enemies.has(enemy_id)) {
                 enemies.set(enemy_id, new Enemy(enemy_id, ''));
             }
+
+            //FIXME find a better way to deal with dead enemies
+            
             enemies.get(enemy_id).updateState(enemyState);
         }
 

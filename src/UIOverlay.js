@@ -7,7 +7,7 @@ class UIOverlay {
             UIOverlay.LeaderTextStyle
         );
         this.leaderText.anchor.set(0.5);
-        this.leaderText.position.set(canvasWidth/2, 20);
+        this.leaderText.position.set(canvasWidth/2, 30);
 
         this.pingText = new PIXI.Text(
             'Ping: ',
@@ -57,14 +57,14 @@ UIOverlay.LeaderTextStyle = new PIXI.TextStyle({
 
 UIOverlay.ScoreTextStyle = new PIXI.TextStyle({
     fontFamily: 'Press Start 2P',
-    fontSize: 11,
+    fontSize: 12,
     fill: 'white',
     align: 'left'
 });
 
 UIOverlay.PingTextStyle = new PIXI.TextStyle({
     fontFamily: 'Press Start 2P',
-    fontSize: 11,
+    fontSize: 12,
     fill: 'white',
     align: 'right'
 });
