@@ -59,10 +59,13 @@ const socket = io(CONNECTION);
 
 const HashMap = require('./hashmap');
 
-const MobileControls = require('./mobile/MobileControls');
+const KeyboardControls = require('./controls/KeyboardControls');
+const MobileControls = require('./controls/MobileControls');
 
 const UIOverlay = require('./UIOverlay'); //FIXME
 const Player = require('./Player');
+// const PlayerStub = require('./PlayerStub');
+
 const Enemy = require('./Enemy');
 const Asteroid = require('./Asteroid');
 const Star = require('./Star'); //FIXME
@@ -72,13 +75,16 @@ const username = prompt('Please enter a username: ');
 const graphics = new PIXI.Graphics();
 
 let player = null;
+// let playerStub = null;
+// let stubGraphics = new PIXI.Graphics();
+
 let enemies = null;
 let asteroids = null;
 let leaderID = '';
 let stars = null;
 let numStars = null;
 let ui = null;
-let mobileControls = null;
+let playerControls = null;
 
 PIXI.loader
   .add('assets/spritesheet.json')
@@ -90,19 +96,25 @@ function setup() {
     ui = new UIOverlay(CANVAS_WIDTH, CANVAS_HEIGHT, MOBILE);
     ui.insertInto(gui);
 
-    //FIXME DO THE CONTROLLER/KEYBOARD REFACTORING
-    mobileControls = new MobileControls(CANVAS_WIDTH, CANVAS_HEIGHT);
-    if (MOBILE) mobileControls.insertInto(gui);
+    if (MOBILE) {
+        playerControls = new MobileControls(CANVAS_WIDTH, CANVAS_HEIGHT);
+        playerControls.insertInto(gui);
+    } else {
+        playerControls = new KeyboardControls();
+    }
 
-    player = new Player(socket, mobileControls);
+    player = new Player(socket, playerControls);
+    //playerStub = new PlayerStub(player);
+
     camera.addChild(player.sprite);
     camera.follow(player.sprite);
+    //camera.addChild(stubGraphics);
 
     enemies = new HashMap();
     asteroids = [];
     leaderID = '';
     stars = [];
-    const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.00009);
+    const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000045);
     for (var i = 0; i < NUM_STARS; i++) {
         stars.push(new Star(3, GAME_SIZE, GAME_SIZE, player));
         stars.push(new Star(2, GAME_SIZE, GAME_SIZE, player));
@@ -139,6 +151,9 @@ function setup() {
             if (!enemies.has(enemy_id)) {
                 enemies.set(enemy_id, new Enemy(enemy_id, ''));
             }
+
+            //FIXME find a better way to deal with dead enemies
+
             enemies.get(enemy_id).updateState(enemyState);
         }
 
@@ -208,12 +223,12 @@ function update(delta) {
     for (let i = 0; i < stars.length; i++) {
         stars[i].update();
     }
+
+    //playerStub.update();
     player.update(delta);
 }
 
 function draw() {
-    // if (player == null) return;
-
     graphics.clear();
 
     graphics.lineStyle(2, 0xffffff, 1);
@@ -226,6 +241,17 @@ function draw() {
         stars[i].draw(graphics);
     }
     graphics.endFill();
+
+    //STUB STUFF
+    // stubGraphics.clear();
+    // stubGraphics.lineStyle(2, 0xffffff, 1);
+    // stubGraphics.drawRect(0, 0, GAME_SIZE, GAME_SIZE);
+    // stubGraphics.endFill();
+    //
+    // stubGraphics.beginFill(0xff0000);
+    // stubGraphics.lineStyle(0, 0x0, 0);
+    // playerStub.draw(stubGraphics);
+    // stubGraphics.endFill();
 
     let enemyArray = enemies.values();
     for (let i = 0; i < enemyArray.length; i++) {
@@ -243,6 +269,7 @@ function draw() {
     if (!player.alive) {
         ui.notifyOfDeath();
     }
+
 }
 
 socket.emit('join', username);
@@ -250,4 +277,4 @@ socket.emit('join', username);
 const FPS = 30;
 let lastUpdate = Date.now();
 
-console.log('Stroids Client v0.3.2');
+console.log('Stroids Client v0.4.0');

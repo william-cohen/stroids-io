@@ -1,13 +1,10 @@
 'use strict';
 
-class MobileControls {
+const Controls = require('./Controls');
+
+class MobileControls extends Controls {
     constructor(canvasWidth, canvasHeight) {
-        this.input = {
-            'W' : false,
-            'A' : false,
-            'S' : false,
-            'D' : false
-        };
+        super();
 
         this.upButton = new PIXI.Text(
             '<',

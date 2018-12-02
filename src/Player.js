@@ -1,6 +1,5 @@
 /* global Image */
 
-const KeyListener = require('./KeyListener');
 const Vector2 = require('../util/Vector2');
 
 class Player {
@@ -8,6 +7,7 @@ class Player {
         this.tick = 0;
         this.socket = socket;
         this.id = 'null';
+
         this.controller = controller;
 
         this.alive = true;
@@ -16,8 +16,11 @@ class Player {
         this.pos = new Vector2(0.0, 0.0);
         this.vel = new Vector2(0.0, 0.0);
 
+        this.spos = new Vector2(0.0, 0.0);
+        this.svel = new Vector2(0.0, 0.0);
+
         this.rotation = 0.0;
-        this.keys = new KeyListener();
+        this.srotation = 0.0;
 
         let frames = [
             PIXI.loader.resources['assets/spritesheet.json'].textures['player.png'],
@@ -34,12 +37,17 @@ class Player {
     }
 
     updateState(state) {
+        if (this.id == 'null') {
+            this.pos.x = state.x;
+            this.pos.y = state.y;
+            //this.rotation = state.rotation;
+        }
         this.id = state.id;
-        this.pos.x = state.x;
-        this.pos.y = state.y;
-        this.vel.x = state.vx;
-        this.vel.y = state.vy;
-        this.rotation = state.rotation;
+        this.spos.x = state.x;
+        this.spos.y = state.y;
+        this.svel.x = state.vx;
+        this.svel.y = state.vy;
+        this.rotation = state.rotation; //srotation
         this.alive = state.alive;
 
         //XXX
@@ -48,12 +56,6 @@ class Player {
 
     update(delta) {
         let thrust = new Vector2(0,0);
-        let input = {
-            'W' : false,
-            'A' : false,
-            'S' : false,
-            'D' : false
-        };
         this.tick++; this.tick %= 30;
         if (this.alive) {
             this.thrust = false;
@@ -62,28 +64,29 @@ class Player {
             this.tick %= 30;
 
             //Left Arrow Key
-            if (this.keys.isPressed(37) || this.controller.input.A) {
-                input.A = true;
-                //
+            if (this.controller.input.A) {
                 this.rotation -= 3.0 * delta;
             }
             //Right Arrow Key
-            if (this.keys.isPressed(39) || this.controller.input.D) {
-                input.D = true;
-                //
+            if (this.controller.input.D) {
                 this.rotation += 3.0 * delta;
             }
             //Up Arrow Key
-            if (this.keys.isPressed(38) || this.keys.isPressed(32) || this.controller.input.W) {
-                input.W = true;
+            if (this.controller.input.W) {
                 this.thrust = true;
                 thrust.x = 30.0 * Math.cos(this.rotation);
                 thrust.y = 30.0 * Math.sin(this.rotation);
             }
-            this.socket.emit('input', input);
+            this.socket.emit('input', this.controller.input);
         }
 
-        this.vel = this.vel.add(thrust.subtract(this.vel.scale(1.75)).scale(delta));
+        this.spos = this.spos.add(this.svel.scale(delta));
+
+        //let angleDelta = Util.angleDelta(this.rotation, this.srotation);
+
+        let offset = this.spos.subtract(this.pos);
+
+        this.vel = this.vel.add(thrust.subtract(this.vel.scale(1.75).subtract(offset.scale(0.15))).scale(delta));
         this.pos = this.pos.add(this.vel);
     }
 

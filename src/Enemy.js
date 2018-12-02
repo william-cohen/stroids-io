@@ -101,6 +101,7 @@ class Enemy {
 
         this.nametag.position.set(p.x, p.y + 30);
     }
+
 }
 
 Enemy.NameStyle = new PIXI.TextStyle({
