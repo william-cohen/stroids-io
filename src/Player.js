@@ -7,7 +7,7 @@ class Player {
         this.tick = 0;
         this.socket = socket;
         this.id = 'null';
-        
+
         this.controller = controller;
 
         this.alive = true;
@@ -16,7 +16,11 @@ class Player {
         this.pos = new Vector2(0.0, 0.0);
         this.vel = new Vector2(0.0, 0.0);
 
+        this.spos = new Vector2(0.0, 0.0);
+        this.svel = new Vector2(0.0, 0.0);
+
         this.rotation = 0.0;
+        this.srotation = 0.0;
 
         let frames = [
             PIXI.loader.resources['assets/spritesheet.json'].textures['player.png'],
@@ -33,12 +37,17 @@ class Player {
     }
 
     updateState(state) {
+        if (this.id == 'null') {
+            this.pos.x = state.x;
+            this.pos.y = state.y;
+            //this.rotation = state.rotation;
+        }
         this.id = state.id;
-        this.pos.x = state.x;
-        this.pos.y = state.y;
-        this.vel.x = state.vx;
-        this.vel.y = state.vy;
-        this.rotation = state.rotation;
+        this.spos.x = state.x;
+        this.spos.y = state.y;
+        this.svel.x = state.vx;
+        this.svel.y = state.vy;
+        this.rotation = state.rotation; //srotation
         this.alive = state.alive;
 
         //XXX
@@ -71,7 +80,13 @@ class Player {
             this.socket.emit('input', this.controller.input);
         }
 
-        this.vel = this.vel.add(thrust.subtract(this.vel.scale(1.75)).scale(delta));
+        this.spos = this.spos.add(this.svel.scale(delta));
+
+        //let angleDelta = Util.angleDelta(this.rotation, this.srotation);
+
+        let offset = this.spos.subtract(this.pos);
+
+        this.vel = this.vel.add(thrust.subtract(this.vel.scale(1.75).subtract(offset.scale(0.15))).scale(delta));
         this.pos = this.pos.add(this.vel);
     }
 
