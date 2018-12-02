@@ -64,7 +64,7 @@ const MobileControls = require('./controls/MobileControls');
 
 const UIOverlay = require('./UIOverlay'); //FIXME
 const Player = require('./Player');
-const PlayerStub = require('./PlayerStub');
+// const PlayerStub = require('./PlayerStub');
 
 const Enemy = require('./Enemy');
 const Asteroid = require('./Asteroid');
@@ -75,8 +75,8 @@ const username = prompt('Please enter a username: ');
 const graphics = new PIXI.Graphics();
 
 let player = null;
-let playerStub = null;
-let stubGraphics = new PIXI.Graphics();
+// let playerStub = null;
+// let stubGraphics = new PIXI.Graphics();
 
 let enemies = null;
 let asteroids = null;
@@ -104,11 +104,11 @@ function setup() {
     }
 
     player = new Player(socket, playerControls);
-    playerStub = new PlayerStub(player);
+    //playerStub = new PlayerStub(player);
 
     camera.addChild(player.sprite);
     camera.follow(player.sprite);
-    camera.addChild(stubGraphics);
+    //camera.addChild(stubGraphics);
 
     enemies = new HashMap();
     asteroids = [];
@@ -224,7 +224,7 @@ function update(delta) {
         stars[i].update();
     }
 
-    playerStub.update();
+    //playerStub.update();
     player.update(delta);
 }
 
@@ -243,15 +243,15 @@ function draw() {
     graphics.endFill();
 
     //STUB STUFF
-    stubGraphics.clear();
-    stubGraphics.lineStyle(2, 0xffffff, 1);
-    stubGraphics.drawRect(0, 0, GAME_SIZE, GAME_SIZE);
-    stubGraphics.endFill();
-
-    stubGraphics.beginFill(0xff0000);
-    stubGraphics.lineStyle(0, 0x0, 0);
-    playerStub.draw(stubGraphics);
-    stubGraphics.endFill();
+    // stubGraphics.clear();
+    // stubGraphics.lineStyle(2, 0xffffff, 1);
+    // stubGraphics.drawRect(0, 0, GAME_SIZE, GAME_SIZE);
+    // stubGraphics.endFill();
+    //
+    // stubGraphics.beginFill(0xff0000);
+    // stubGraphics.lineStyle(0, 0x0, 0);
+    // playerStub.draw(stubGraphics);
+    // stubGraphics.endFill();
 
     let enemyArray = enemies.values();
     for (let i = 0; i < enemyArray.length; i++) {
