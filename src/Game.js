@@ -277,4 +277,4 @@ socket.emit('join', username);
 const FPS = 30;
 let lastUpdate = Date.now();
 
-console.log('Stroids Client v0.3.2');
+console.log('Stroids Client v0.4.0');
