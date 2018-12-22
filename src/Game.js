@@ -6,7 +6,7 @@ const CANVAS_HEIGHT = 0.95 * window.innerHeight;
 
 const PIXI = require('pixi.js');
 const Viewport = require('pixi-viewport');
-const MOBILE = require('is-mobile')();
+const MOBILE = true; //require('is-mobile')();
 
 
 WebFont.load({
@@ -104,6 +104,7 @@ function setup() {
     }
 
     player = new Player(socket, playerControls);
+    playerControls.setObserver(player);
     //playerStub = new PlayerStub(player);
 
     camera.addChild(player.sprite);

@@ -36,6 +36,12 @@ class Player {
         this.sprite.play();
     }
 
+    notifyInputChange() {
+        //FIXME
+        //console.log('Input changed!');
+        this.socket.emit('input', this.controller.input);
+    }
+
     updateState(state) {
         if (this.id == 'null') {
             this.pos.x = state.x;
@@ -77,7 +83,7 @@ class Player {
                 thrust.x = 30.0 * Math.cos(this.rotation);
                 thrust.y = 30.0 * Math.sin(this.rotation);
             }
-            this.socket.emit('input', this.controller.input);
+            // this.socket.emit('input', this.controller.input);
         }
 
         this.spos = this.spos.add(this.svel.scale(delta));

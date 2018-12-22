@@ -22,10 +22,12 @@ class MobileControls extends Controls {
         this.upButton.on('pointerdown', (event) => {
             this.upButton.style.fill = 'red';
             this.input.W = true;
+            super.notifyChange();
         });
         this.upButton.on('pointerup', (event) => {
             this.upButton.style.fill = 'white';
             this.input.W = false;
+            super.notifyChange();
         });
 
         this.leftButton = new PIXI.Text(
@@ -43,10 +45,12 @@ class MobileControls extends Controls {
         this.leftButton.on('pointerdown', (event) => {
             this.leftButton.style.fill = 'red';
             this.input.A = true;
+            super.notifyChange();
         });
         this.leftButton.on('pointerup', (event) => {
             this.leftButton.style.fill = 'white';
             this.input.A = false;
+            super.notifyChange();
         });
 
         this.rightButton = new PIXI.Text(
@@ -64,10 +68,12 @@ class MobileControls extends Controls {
         this.rightButton.on('pointerdown', (event) => {
             this.rightButton.style.fill = 'red';
             this.input.D = true;
+            super.notifyChange();
         });
         this.rightButton.on('pointerup', (event) => {
             this.rightButton.style.fill = 'white';
             this.input.D = false;
+            super.notifyChange();
         });
     }
 

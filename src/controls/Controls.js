@@ -1,7 +1,7 @@
 'use strict';
 
 class Controls {
-    constructor() {
+    constructor(observer) {
         this.input = {
             'W' : false,
             'A' : false,
@@ -9,6 +9,15 @@ class Controls {
             'D' : false
         };
     }
+
+    setObserver(observer) {
+        this.observer = observer;
+    }
+
+    notifyChange() {
+        this.observer.notifyInputChange();
+    }
+
 }
 
 module.exports = Controls;
