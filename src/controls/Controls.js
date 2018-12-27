@@ -1,7 +1,7 @@
 'use strict';
 
 class Controls {
-    constructor(observer) {
+    constructor() {
         this.input = {
             'W' : false,
             'A' : false,

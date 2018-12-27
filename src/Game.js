@@ -6,7 +6,7 @@ const CANVAS_HEIGHT = 0.95 * window.innerHeight;
 
 const PIXI = require('pixi.js');
 const Viewport = require('pixi-viewport');
-const MOBILE = true; //require('is-mobile')();
+const MOBILE = require('is-mobile')();
 
 
 WebFont.load({
