@@ -104,6 +104,7 @@ function setup() {
     }
 
     player = new Player(socket, playerControls);
+    playerControls.setObserver(player);
     //playerStub = new PlayerStub(player);
 
     camera.addChild(player.sprite);

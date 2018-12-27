@@ -9,6 +9,15 @@ class Controls {
             'D' : false
         };
     }
+
+    setObserver(observer) {
+        this.observer = observer;
+    }
+
+    notifyChange() {
+        this.observer.notifyInputChange();
+    }
+
 }
 
 module.exports = Controls;

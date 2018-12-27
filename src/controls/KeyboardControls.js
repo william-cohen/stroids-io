@@ -10,6 +10,7 @@ class KeyboardControls extends Controls {
     }
 
     keydown(e) {
+        if (e.repeat) return;
         switch(e.keyCode) {
             case 37:
                 this.input.A = true;
@@ -21,9 +22,11 @@ class KeyboardControls extends Controls {
                 this.input.D = true;
                 break;
         }
+        super.notifyChange();
     }
 
     keyup(e) {
+        if (e.repeat) return;
         switch(e.keyCode) {
             case 37:
                 this.input.A = false;
@@ -35,6 +38,7 @@ class KeyboardControls extends Controls {
                 this.input.D = false;
                 break;
         }
+        super.notifyChange();
     }
 }
 
