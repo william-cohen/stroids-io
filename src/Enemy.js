@@ -1,6 +1,4 @@
-'use strict';
-
-/* global Image */
+/* global require, PIXI */
 const Vector2 = require('../util/Vector2');
 const hspline = require('../util/HermiteSpline');
 const Util = require('../util/Util');
@@ -77,7 +75,7 @@ class Enemy {
         //this.pos.y += this.vel.y*delta;
     }
 
-    draw(ctx) {
+    draw() {
         if (!this.alive) return;
 
         //XXX Assumed network tickrate of 6Hz

@@ -1,4 +1,4 @@
-/* global window, document, io, prompt */
+/* global process, window, document, WebFont, require, prompt */
 const CONNECTION = process.env.SERVER_URL + ':' + process.env.PORT;
 const GAME_SIZE = 1000;
 const CANVAS_WIDTH = 0.95 * window.innerWidth;
@@ -11,9 +11,9 @@ const MOBILE = require('is-mobile')();
 
 WebFont.load({
     google: {
-      families: ['Press Start 2P']
+        families: ['Press Start 2P']
     }
-  });
+});
 
 //Create a Pixi Application
 const app = new PIXI.Application({
@@ -22,8 +22,7 @@ const app = new PIXI.Application({
     antialias: false,    // default: false
     transparent: false, // default: false
     resolution: 1       // default: 1
-  }
-);
+});
 
 const camera = new Viewport({
     screenWidth: CANVAS_WIDTH,
@@ -67,7 +66,7 @@ const Player = require('./Player');
 // const PlayerStub = require('./PlayerStub');
 
 const Enemy = require('./Enemy');
-const Asteroid = require('./Asteroid');
+const Asteroid = require('./Asteroid').default;
 const Star = require('./Star'); //FIXME
 const Latency = require('./Latency').init(socket);
 
@@ -82,13 +81,12 @@ let enemies = null;
 let asteroids = null;
 let leaderID = '';
 let stars = null;
-let numStars = null;
 let ui = null;
 let playerControls = null;
 
 PIXI.loader
-  .add('assets/spritesheet.json')
-  .load(setup);
+    .add('assets/spritesheet.json')
+    .load(setup);
 
 function setup() {
     camera.addChild(graphics);
@@ -129,6 +127,8 @@ function setup() {
     });
 
     socket.on('message', function(text) {
+        //TODO make the message show properly
+        // eslint-disable-next-line no-console
         console.log('Message: ' + text);
     });
 
@@ -278,4 +278,5 @@ socket.emit('join', username);
 const FPS = 30;
 let lastUpdate = Date.now();
 
+// eslint-disable-next-line no-console
 console.log('Stroids Client v0.4.0');

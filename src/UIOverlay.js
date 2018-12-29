@@ -1,3 +1,4 @@
+/* global PIXI */
 'use strict';
 
 class UIOverlay {

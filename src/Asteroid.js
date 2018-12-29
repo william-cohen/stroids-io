@@ -1,4 +1,4 @@
-/* global Image */
+/* global require, PIXI */
 const Vector2 = require('../util/Vector2');
 
 class Asteroid {
@@ -13,11 +13,11 @@ class Asteroid {
             this.radius = 10;
             break;
         case 2:
-        this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures['rock2.png']);
+            this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures['rock2.png']);
             this.radius = 15;
             break;
         case 3:
-        this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures['rock3.png']);
+            this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures['rock3.png']);
             this.radius = 25;
             break;
         default:
@@ -38,7 +38,7 @@ class Asteroid {
         this.pos.y += this.vel.y*delta;
     }
 
-    draw(ctx) {
+    draw() {
         this.sprite.x = this.pos.x;
         this.sprite.y = this.pos.y;
     }
