@@ -1,4 +1,4 @@
-/* global Image */
+/* global Image, PIXI */
 
 const Vector2 = require('../util/Vector2');
 
@@ -92,7 +92,13 @@ class Player {
 
         let offset = this.spos.subtract(this.pos);
 
-        this.vel = this.vel.add(thrust.subtract(this.vel.scale(1.75).subtract(offset.scale(0.15))).scale(delta));
+        //Need to investigate better rubber-banding methods with more math
+        //Also might be worth delegating to GPU (somehow)
+        let fnet = thrust.subtract(
+            this.vel.scale(1.75).subtract(offset.scale(0.015*offset.mag()))
+        );
+
+        this.vel = this.vel.add(fnet.scale(delta));
         this.pos = this.pos.add(this.vel);
     }
 
