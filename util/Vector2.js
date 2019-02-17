@@ -63,6 +63,15 @@ class Vector2 {
         return new Vector2(this.x, this.y);
     }
 
+    /**
+     * Computes the dot product with another vector
+     * @param {Vector2} vec The vector to compute with
+     * @return {Number}
+     */
+    dot(vec) {
+        return (this.x*vec.x + this.y*vec.y);
+    }
+
 }
 
 module.exports = Vector2;

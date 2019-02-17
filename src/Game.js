@@ -66,7 +66,7 @@ const Player = require('./Player');
 // const PlayerStub = require('./PlayerStub');
 
 const Enemy = require('./Enemy');
-const Asteroid = require('./Asteroid').default;
+const Asteroid = require('./Asteroid');
 const Star = require('./Star'); //FIXME
 const Latency = require('./Latency').init(socket);
 
