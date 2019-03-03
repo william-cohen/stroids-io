@@ -1,28 +1,25 @@
 var path = require('path');
-var webpack = require('webpack');
 var Dotenv = require('dotenv-webpack');
 
 
 module.exports = {
-    mode: 'production',
-    entry: './src/Game.js',
+    entry: ['./src/App.tsx'],
     output: {
-        path: path.resolve(__dirname, 'public/js'),
-        filename: 'game.js'
+        path: path.resolve(__dirname, 'build'),
+        filename: 'bundle.js'
     },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js']
+    },
+  
     module: {
-        rules: [
+        loaders: [
             {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/
             }
         ]
-    },
-    stats: {
-        colors: true
     },
     devtool: 'source-map',
     plugins: [

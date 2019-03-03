@@ -1,5 +1,3 @@
-'use strict';
-
 class Star {
     constructor(size, maxX, maxY, player) {
         this.x = Math.random() * maxX;
@@ -39,4 +37,4 @@ class Star {
     }
 }
 
-module.exports = Star;
+export default Star;

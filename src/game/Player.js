@@ -1,6 +1,5 @@
-/* global Image, PIXI */
-
-const Vector2 = require('../util/Vector2');
+import PIXI from 'pixi.js';
+import Vector2 from '../util/Vector2';
 
 class Player {
     constructor(socket, controller) {
@@ -43,7 +42,7 @@ class Player {
     }
 
     updateState(state) {
-        if (this.id == 'null') {
+        if (this.id === 'null') {
             this.pos.x = state.x;
             this.pos.y = state.y;
             //this.rotation = state.rotation;
@@ -116,4 +115,4 @@ class Player {
     }
 }
 
-module.exports = Player;
+export default Player;

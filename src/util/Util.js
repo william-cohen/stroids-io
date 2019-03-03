@@ -1,8 +1,4 @@
 class Util {
-    constructor() {
-
-    }
-
     static angleDelta(theta1, theta2) {
         let d = Math.abs(theta1 - theta2);
         let r = d > Math.PI ? 2*Math.PI - d : d;

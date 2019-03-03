@@ -1,8 +1,7 @@
-/* global PIXI */
-'use strict';
+import * as PIXI from 'pixi.js';
 
 class UIOverlay {
-    constructor(canvasWidth, canvasHeight, mobile) {
+    constructor(canvasWidth) {
         this.leaderText = new PIXI.Text(
             'Leader: ',
             UIOverlay.LeaderTextStyle
@@ -50,24 +49,24 @@ class UIOverlay {
 }
 
 UIOverlay.LeaderTextStyle = new PIXI.TextStyle({
-    fontFamily: 'Press Start 2P',
-    fontSize: 16,
+    //fontFamily: 'Press Start 2P',
+    fontSize: 18,
     fill: 'white',
     align: 'center'
 });
 
 UIOverlay.ScoreTextStyle = new PIXI.TextStyle({
-    fontFamily: 'Press Start 2P',
-    fontSize: 12,
+    //fontFamily: 'Press Start 2P',
+    fontSize: 14,
     fill: 'white',
     align: 'left'
 });
 
 UIOverlay.PingTextStyle = new PIXI.TextStyle({
-    fontFamily: 'Press Start 2P',
-    fontSize: 12,
+    //fontFamily: 'Press Start 2P',
+    fontSize: 14,
     fill: 'white',
     align: 'right'
 });
 
-module.exports = UIOverlay;
+export default UIOverlay;

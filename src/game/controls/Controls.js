@@ -1,5 +1,3 @@
-'use strict';
-
 class Controls {
     constructor() {
         this.input = {
@@ -20,4 +18,4 @@ class Controls {
 
 }
 
-module.exports = Controls;
+export default Controls;

@@ -1,6 +1,5 @@
-'use strict';
-
-const Controls = require('./Controls');
+import PIXI from 'pixi.js';
+import Controls from './Controls';
 
 class MobileControls extends Controls {
     constructor(canvasWidth, canvasHeight) {
@@ -84,4 +83,4 @@ class MobileControls extends Controls {
     }
 }
 
-module.exports = MobileControls;
+export default MobileControls;

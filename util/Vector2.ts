@@ -1,13 +1,14 @@
-'use strict';
-
 class Vector2 {
+    x: number;
+    y: number;
+    
     /**
      * Vector constructor
      * @constructor
      * @param {number} x x-value of new Vector
      * @param {number} y y-value of new Vector
      */
-    constructor(x, y) {
+    constructor(x: number, y: number) {
         this.x = x + 0.0;
         this.y = y + 0.0;
     }
@@ -16,7 +17,7 @@ class Vector2 {
      * Calculates the magnitute-squared of a vector
      * @return {number}
      */
-    mag2() {
+    mag2(): number {
         return (this.x*this.x + this.y*this.y);
     }
 
@@ -24,7 +25,7 @@ class Vector2 {
      * Calculates the magnitute of a vector
      * @return {number}
      */
-    mag() {
+    mag(): number {
         return Math.sqrt(this.mag2());
     }
 
@@ -33,7 +34,7 @@ class Vector2 {
      * @param {Vector2} vec The vector to add
      * @return {Vector2}
      */
-    add(vec) {
+    add(vec: Vector2): Vector2 {
         return new Vector2(this.x+vec.x, this.y+vec.y);
     }
 
@@ -42,7 +43,7 @@ class Vector2 {
      * @param {Vector2} vec The vector to subtract
      * @return {Vector2}
      */
-    subtract(vec) {
+    subtract(vec: Vector2): Vector2 {
         return new Vector2(this.x-vec.x, this.y-vec.y);
     }
 
@@ -51,7 +52,7 @@ class Vector2 {
      * @param {number} a The scaling constant
      * @return {Vector2}
      */
-    scale(a) {
+    scale(a: number): Vector2 {
         return new Vector2(this.x*a, this.y*a);
     }
 
@@ -59,7 +60,7 @@ class Vector2 {
      * Clones this current vector
      * @return {Vector2}
      */
-    clone() {
+    clone(): Vector2 {
         return new Vector2(this.x, this.y);
     }
 
@@ -68,10 +69,10 @@ class Vector2 {
      * @param {Vector2} vec The vector to compute with
      * @return {Number}
      */
-    dot(vec) {
+    dot(vec: Vector2): number {
         return (this.x*vec.x + this.y*vec.y);
     }
 
 }
 
-module.exports = Vector2;
+export default Vector2;

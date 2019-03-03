@@ -1,7 +1,7 @@
 /* global require, PIXI */
-const Vector2 = require('../util/Vector2');
-const hspline = require('../util/HermiteSpline');
-const Util = require('../util/Util');
+import Vector2 from '../util/Vector2';
+import hspline from '../util/HermiteSpline';
+import Util from '../util/Util';
 
 class Enemy {
 
@@ -65,7 +65,7 @@ class Enemy {
         this.alive = state.alive;
     }
 
-    update(delta) {
+    update(/*delta*/) {
         if (!this.alive) return;
 
         this.tick++;
@@ -109,4 +109,4 @@ Enemy.NameStyle = new PIXI.TextStyle({
     align: 'center'
 });
 
-module.exports = Enemy;
+export default Enemy;

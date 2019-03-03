@@ -1,8 +1,4 @@
-/* eslint no-unused-vars: */
-
-'use strict';
-
-const Vector2 = require('../util/Vector2');
+import Vector2 from './Vector2';
 
 
 /**
@@ -11,9 +7,9 @@ const Vector2 = require('../util/Vector2');
  * @param {Vector2} v0 Start velocity
  * @param {Vector2} x1 Final position
  * @param {Vector2} v1 Final velocity
- * @param {Number} t Time proportion
+ * @param {number} t Time proportion
  */
-function hermiteSpline(x0, v0, x1, v1, t) {
+function hermiteSpline(x0: Vector2, v0: Vector2, x1: Vector2, v1: Vector2, t: number) {
     let p = x0.scale(2*t*t*t - 3*t*t + 1)
         .add(v0.scale(t*t*t - 2*t*t + t))
         .add(x1.scale(-2*t*t*t + 3*t*t))
@@ -21,4 +17,4 @@ function hermiteSpline(x0, v0, x1, v1, t) {
     return p;
 }
 
-module.exports = hermiteSpline;
+export default hermiteSpline;

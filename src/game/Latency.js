@@ -15,4 +15,4 @@ class Latency {
 
 }
 
-module.exports = Latency;
+export default Latency;
