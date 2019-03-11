@@ -3,9 +3,6 @@
   "version": "0.2.0",
   "description": "A sample socket io server",
   "scripts": {
-    "dev": "npm run build && xdg-open http://127.0.0.1:3000 && node Server.js ",
-    "babel": "babel --presets es2015 js/game.js -o build/game.bundle.js",
-    "webpack": "webpack",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

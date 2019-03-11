@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js';
 
+const FONT = 'RetroComputer';
+
 class UIOverlay {
-    constructor(canvasWidth) {
+    constructor(canvasWidth, name) {
         this.leaderText = new PIXI.Text(
             'Leader: ',
             UIOverlay.LeaderTextStyle
@@ -13,21 +15,29 @@ class UIOverlay {
             'Ping: ',
             UIOverlay.PingTextStyle
         );
-        this.pingText.anchor.set(0.5);
-        this.pingText.position.set(canvasWidth/8, 10);
+        this.pingText.anchor.set(0);
+        this.pingText.position.set(7*canvasWidth/8, 30);
+
+        this.nameText = new PIXI.Text(
+            'Name: ' + name,
+            UIOverlay.ScoreTextStyle
+        );
+        this.nameText.anchor.set(0);
+        this.nameText.position.set(canvasWidth/8, 30);
 
         this.scoreText = new PIXI.Text(
             'Score: ',
             UIOverlay.ScoreTextStyle
         );
-        this.scoreText.anchor.set(0.5);
-        this.scoreText.position.set(7*canvasWidth/8, 10);
+        this.scoreText.anchor.set(0);
+        this.scoreText.position.set(canvasWidth/8, 50);
 
     }
 
     insertInto(view) {
         view.addChild(this.leaderText);
         view.addChild(this.scoreText);
+        view.addChild(this.nameText);
         view.addChild(this.pingText);
     }
 
@@ -38,7 +48,7 @@ class UIOverlay {
     setPing(ping) {
         this.pingText.text = 'Ping: ' + ping;
     }
-
+    
     setScore(score) {
         this.scoreText.text = 'Score: ' + score;
     }
@@ -49,22 +59,22 @@ class UIOverlay {
 }
 
 UIOverlay.LeaderTextStyle = new PIXI.TextStyle({
-    //fontFamily: 'Press Start 2P',
-    fontSize: 18,
+    fontFamily: FONT,
+    fontSize: 20,
     fill: 'white',
     align: 'center'
 });
 
 UIOverlay.ScoreTextStyle = new PIXI.TextStyle({
-    //fontFamily: 'Press Start 2P',
-    fontSize: 14,
+    fontFamily: FONT,
+    fontSize: 16,
     fill: 'white',
-    align: 'left'
+    align: 'right'
 });
 
 UIOverlay.PingTextStyle = new PIXI.TextStyle({
-    //fontFamily: 'Press Start 2P',
-    fontSize: 14,
+    fontFamily: FONT,
+    fontSize: 16,
     fill: 'white',
     align: 'right'
 });

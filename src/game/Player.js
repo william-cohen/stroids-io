@@ -1,8 +1,9 @@
-import PIXI from 'pixi.js';
+/* global PIXI */
 import Vector2 from '../util/Vector2';
 
 class Player {
-    constructor(socket, controller) {
+    constructor(socket, username, controller) {
+        this.username = username;
         this.tick = 0;
         this.socket = socket;
         this.id = 'null';
