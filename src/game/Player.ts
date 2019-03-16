@@ -1,10 +1,33 @@
-/* global PIXI */
+import * as PIXI from 'pixi.js';
 import Vector2 from '../util/Vector2';
+import Observer from './controls/Observer';
+import Controls from './controls/Controls';
+import { PlayerStatePacket } from './NetworkPackets';
 
-class Player {
-    constructor(socket, username, controller) {
+class Player extends Observer {
+    private id: string;
+    private username: string;
+    private pos: Vector2;
+    private vel: Vector2;
+    private spos: Vector2;
+    private svel: Vector2;
+    private rotation: number;
+    private srotation: number;
+    private sprite: PIXI.extras.AnimatedSprite;
+    private thrust: boolean;
+
+    private alive: boolean;
+    private tick: number;
+    private socket: SocketIOClient.Socket;
+    private controller: Controls;
+
+    private score: number;
+
+    constructor(socket: SocketIOClient.Socket, username: string, controller: Controls) {
+        super();
         this.username = username;
         this.tick = 0;
+        this.score = 0;
         this.socket = socket;
         this.id = 'null';
 
@@ -22,9 +45,12 @@ class Player {
         this.rotation = 0.0;
         this.srotation = 0.0;
 
-        let frames = [
+        let frames: Array<PIXI.Texture> = [
+            //@ts-ignore: Object is possibly 'undefined'
             PIXI.loader.resources['assets/spritesheet.json'].textures['player.png'],
+            //@ts-ignore: Object is possibly 'undefined'
             PIXI.loader.resources['assets/spritesheet.json'].textures['playerT.png'],
+            //@ts-ignore: Object is possibly 'undefined'
             PIXI.loader.resources['assets/spritesheet.json'].textures['playerT2.png']
         ];
         this.sprite = new PIXI.extras.AnimatedSprite(frames);
@@ -42,7 +68,7 @@ class Player {
         this.socket.emit('input', this.controller.input);
     }
 
-    updateState(state) {
+    updateState(state: PlayerStatePacket) {
         if (this.id === 'null') {
             this.pos.x = state.x;
             this.pos.y = state.y;
@@ -60,7 +86,27 @@ class Player {
         if (!this.alive) this.sprite.visible = false;
     }
 
-    update(delta) {
+    setScore(score: number) {
+        this.score = score;
+    }
+
+    getScore() {
+        return this.score;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    getVX(): number {
+        return this.vel.x;
+    }
+
+    getVY(): number {
+        return this.vel.y;
+    }
+
+    update(delta: number) {
         let thrust = new Vector2(0,0);
         this.tick++; this.tick %= 30;
         if (this.alive) {
@@ -70,15 +116,15 @@ class Player {
             this.tick %= 30;
 
             //Left Arrow Key
-            if (this.controller.input.A) {
+            if (this.controller.getA()) {
                 this.rotation -= 3.0 * delta;
             }
             //Right Arrow Key
-            if (this.controller.input.D) {
+            if (this.controller.getD()) {
                 this.rotation += 3.0 * delta;
             }
             //Up Arrow Key
-            if (this.controller.input.W) {
+            if (this.controller.getW()) {
                 this.thrust = true;
                 thrust.x = 30.0 * Math.cos(this.rotation);
                 thrust.y = 30.0 * Math.sin(this.rotation);
@@ -113,6 +159,19 @@ class Player {
         this.sprite.y = this.pos.y;
 
         this.sprite.rotation = this.rotation + Math.PI/2;
+    }
+
+    insertInto(camera: Viewport) {
+        camera.addChild(this.sprite);
+        camera.follow(this.sprite);
+    }
+
+    removeFrom(camera: Viewport) {
+        camera.removeChild(this.sprite);
+    }
+
+    isAlive() {
+        return this.alive;
     }
 }
 

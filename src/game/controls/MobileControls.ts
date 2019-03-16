@@ -2,13 +2,16 @@ import PIXI from 'pixi.js';
 import Controls from './Controls';
 
 class MobileControls extends Controls {
-    constructor(canvasWidth, canvasHeight) {
-        super();
+    private upButton: PIXI.Text;
+    private leftButton: PIXI.Text;
+    private rightButton: PIXI.Text;
 
+    constructor(canvasWidth: number, canvasHeight: number) {
+        super();
         this.upButton = new PIXI.Text(
             '<',
             new PIXI.TextStyle({
-                fontFamily: 'Press Start 2P',
+                fontFamily: 'RetroComputer',
                 fontSize: 72,
                 fill: 'white',
                 align: 'center'
@@ -32,7 +35,7 @@ class MobileControls extends Controls {
         this.leftButton = new PIXI.Text(
             '<',
             new PIXI.TextStyle({
-                fontFamily: 'Press Start 2P',
+                fontFamily: 'RetroComputer',
                 fontSize: 72,
                 fill: 'white',
                 align: 'center'
@@ -55,7 +58,7 @@ class MobileControls extends Controls {
         this.rightButton = new PIXI.Text(
             '>',
             new PIXI.TextStyle({
-                fontFamily: 'Press Start 2P',
+                fontFamily: 'RetroComputer',
                 fontSize: 72,
                 fill: 'white',
                 align: 'center'
@@ -76,7 +79,7 @@ class MobileControls extends Controls {
         });
     }
 
-    insertInto(view) {
+    insertInto(view: Viewport) {
         view.addChild(this.upButton);
         view.addChild(this.leftButton);
         view.addChild(this.rightButton);

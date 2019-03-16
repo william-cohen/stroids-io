@@ -7,7 +7,7 @@ class KeyboardControls extends Controls {
         document.addEventListener('keyup', this.keyup.bind(this));
     }
 
-    keydown(e) {
+    keydown(e: KeyboardEvent) {
         if (e.repeat) return;
         switch(e.keyCode) {
         case 37:
@@ -25,7 +25,7 @@ class KeyboardControls extends Controls {
         super.notifyChange();
     }
 
-    keyup(e) {
+    keyup(e: KeyboardEvent) {
         if (e.repeat) return;
         switch(e.keyCode) {
         case 37:

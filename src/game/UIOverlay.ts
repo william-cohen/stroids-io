@@ -3,7 +3,33 @@ import * as PIXI from 'pixi.js';
 const FONT = 'RetroComputer';
 
 class UIOverlay {
-    constructor(canvasWidth, name) {
+    private static LeaderTextStyle = new PIXI.TextStyle({
+        fontFamily: FONT,
+        fontSize: 20,
+        fill: 'white',
+        align: 'center'
+    });
+
+    private static ScoreTextStyle = new PIXI.TextStyle({
+        fontFamily: FONT,
+        fontSize: 16,
+        fill: 'white',
+        align: 'right'
+    });
+
+    private static PingTextStyle = new PIXI.TextStyle({
+        fontFamily: FONT,
+        fontSize: 16,
+        fill: 'white',
+        align: 'right'
+    });
+
+    private leaderText: PIXI.Text;
+    private pingText: PIXI.Text;
+    private nameText: PIXI.Text;
+    private scoreText: PIXI.Text;
+
+    constructor(canvasWidth: number, name: string) {
         this.leaderText = new PIXI.Text(
             'Leader: ',
             UIOverlay.LeaderTextStyle
@@ -23,33 +49,33 @@ class UIOverlay {
             UIOverlay.ScoreTextStyle
         );
         this.nameText.anchor.set(0);
-        this.nameText.position.set(canvasWidth/8, 30);
+        this.nameText.position.set(canvasWidth/16, 30);
 
         this.scoreText = new PIXI.Text(
             'Score: ',
             UIOverlay.ScoreTextStyle
         );
         this.scoreText.anchor.set(0);
-        this.scoreText.position.set(canvasWidth/8, 50);
+        this.scoreText.position.set(canvasWidth/16, 50);
 
     }
 
-    insertInto(view) {
+    insertInto(view: Viewport) {
         view.addChild(this.leaderText);
         view.addChild(this.scoreText);
         view.addChild(this.nameText);
         view.addChild(this.pingText);
     }
 
-    setLeaderText(text) {
+    setLeaderText(text: string) {
         this.leaderText.text = text;
     }
 
-    setPing(ping) {
+    setPing(ping: number) {
         this.pingText.text = 'Ping: ' + ping;
     }
     
-    setScore(score) {
+    setScore(score: number) {
         this.scoreText.text = 'Score: ' + score;
     }
 
@@ -57,26 +83,5 @@ class UIOverlay {
         this.leaderText.text = 'You have died :(';
     }
 }
-
-UIOverlay.LeaderTextStyle = new PIXI.TextStyle({
-    fontFamily: FONT,
-    fontSize: 20,
-    fill: 'white',
-    align: 'center'
-});
-
-UIOverlay.ScoreTextStyle = new PIXI.TextStyle({
-    fontFamily: FONT,
-    fontSize: 16,
-    fill: 'white',
-    align: 'right'
-});
-
-UIOverlay.PingTextStyle = new PIXI.TextStyle({
-    fontFamily: FONT,
-    fontSize: 16,
-    fill: 'white',
-    align: 'right'
-});
 
 export default UIOverlay;
