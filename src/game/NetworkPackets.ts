@@ -18,13 +18,21 @@ export interface AsteroidStatePacket {
 }
 
 export interface GameStatePacket {
-    addedPlayers: Array<{id: string, username: string}>;
-    asteroids: Array<AsteroidStatePacket>;
     enemies: Array<PlayerStatePacket>;
     leader: string;
     player: PlayerStatePacket;
-    removedPlayers: Array<string>;
     score: number;
     timestamp: number;
-    updatedAsteroids: Array<AsteroidStatePacket>;
+    asteroids: Array<AsteroidStatePacket>;
+}
+
+export interface InitialStatePakcet {
+    player: PlayerStatePacket;
+    enemies: Array<AddedPlayerPacket>;
+    asteroids: Array<AsteroidStatePacket>;
+}
+
+export interface AddedPlayerPacket {
+    id: string;
+    username: string;
 }

@@ -23,12 +23,12 @@ class MobileControls extends Controls {
         this.upButton.interactive = true;
         this.upButton.on('pointerdown', (event) => {
             this.upButton.style.fill = 'red';
-            this.input.W = true;
+            this.input[0] = true;
             super.notifyChange();
         });
         this.upButton.on('pointerup', (event) => {
             this.upButton.style.fill = 'white';
-            this.input.W = false;
+            this.input[0] = false;
             super.notifyChange();
         });
 
@@ -46,12 +46,12 @@ class MobileControls extends Controls {
         this.leftButton.interactive = true;
         this.leftButton.on('pointerdown', (event) => {
             this.leftButton.style.fill = 'red';
-            this.input.A = true;
+            this.input[1] = true;
             super.notifyChange();
         });
         this.leftButton.on('pointerup', (event) => {
             this.leftButton.style.fill = 'white';
-            this.input.A = false;
+            this.input[1] = false;
             super.notifyChange();
         });
 
@@ -69,12 +69,12 @@ class MobileControls extends Controls {
         this.rightButton.interactive = true;
         this.rightButton.on('pointerdown', (event) => {
             this.rightButton.style.fill = 'red';
-            this.input.D = true;
+            this.input[3] = true;
             super.notifyChange();
         });
         this.rightButton.on('pointerup', (event) => {
             this.rightButton.style.fill = 'white';
-            this.input.D = false;
+            this.input[3] = false;
             super.notifyChange();
         });
     }

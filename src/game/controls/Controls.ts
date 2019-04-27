@@ -1,22 +1,10 @@
 import Observer from "./Observer";
 
-interface Input {
-    W: boolean;
-    A: boolean;
-    S: boolean;
-    D: boolean;
-}
-
 class Controls {
-    public input: Input;
+    public input: Array<boolean>;
     protected observer: Observer | null;
     constructor() {
-        this.input = {
-            'W': false,
-            'A': false,
-            'S': false,
-            'D': false
-        };
+        this.input = [false, false, false, false];
         this.observer = null;
     }
 
@@ -29,16 +17,16 @@ class Controls {
     }
 
     getW() {
-        return this.input.W;
+        return this.input[0];
     }
     getA() {
-        return this.input.A;
+        return this.input[1];
     }
     getS() {
-        return this.input.S;
+        return this.input[2];
     }
     getD() {
-        return this.input.D;
+        return this.input[3];
     }
 
 

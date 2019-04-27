@@ -11,13 +11,13 @@ class KeyboardControls extends Controls {
         if (e.repeat) return;
         switch(e.keyCode) {
         case 37:
-            this.input.A = true;
+            this.input[1] = true;
             break;
         case 38:
-            this.input.W = true;
+            this.input[0] = true;
             break;
         case 39:
-            this.input.D = true;
+            this.input[3] = true;
             break;
         default:
             break;
@@ -29,13 +29,13 @@ class KeyboardControls extends Controls {
         if (e.repeat) return;
         switch(e.keyCode) {
         case 37:
-            this.input.A = false;
+            this.input[1] = false;
             break;
         case 38:
-            this.input.W = false;
+            this.input[0] = false;
             break;
         case 39:
-            this.input.D = false;
+            this.input[3] = false;
             break;
         default:
             break;

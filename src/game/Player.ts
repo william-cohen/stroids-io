@@ -72,9 +72,8 @@ class Player extends Observer {
         if (this.id === 'null') {
             this.pos.x = state.x;
             this.pos.y = state.y;
-            //this.rotation = state.rotation;
+            this.id = state.id;
         }
-        this.id = state.id;
         this.spos.x = state.x;
         this.spos.y = state.y;
         this.svel.x = state.vx;

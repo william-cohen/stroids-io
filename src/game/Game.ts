@@ -15,7 +15,7 @@ import Asteroid from './Asteroid';
 import Star from './Star'; //FIXME
 import Latency from './Latency';
 import Controls from './controls/Controls';
-import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket } from './NetworkPackets';
+import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, AddedPlayerPacket, InitialStatePakcet } from './NetworkPackets';
 
 //@ts-ignore: no compatible call siganatures
 const IS_MOBILE: boolean = IsMobile();
@@ -104,10 +104,7 @@ class Game {
         
             player = new Player(socket, username, playerControls);
             playerControls.setObserver(player);
-            //playerStub = new PlayerStub(player);
-        
             player.insertInto(camera);
-            //camera.addChild(stubGraphics);
         
             enemies = new HashMap();
             asteroids = [];
@@ -132,17 +129,59 @@ class Game {
                 // eslint-disable-next-line no-console
                 console.log('Message: ' + text);
             });
-        
-            //TODO create interface for state update state object !!!
-            socket.on('state', function(state: GameStatePacket) {
-                if (state.addedPlayers.length > 0) console.log(state);
 
+            socket.on('init', function (state: InitialStatePakcet, ack: (arg: string) => any) {
+                console.log('init');
+                console.log(state);
+
+                player.updateState(state.player);
+
+                //Create Asteroids
+                for (let i = 0; i < state.asteroids.length; i++) {
+                    let asteroidInfo: AsteroidStatePacket = state.asteroids[i];
+                    let id: number = asteroidInfo.id;
+                    if (asteroids[id] == null) {
+                        asteroids[id] = new Asteroid(id%3+1);
+                        camera.addChild(asteroids[id].getSprite());
+                    }
+                    asteroids[id].setState(asteroidInfo);
+                }
+
+                for (let i = 0; i < state.enemies.length; i++) {
+                    let enemyInfo = state.enemies[i];
+                    let newEnemy = new Enemy(enemyInfo.id, enemyInfo.username)
+                    enemies.set(enemyInfo.id, newEnemy);
+                    newEnemy.insertInto(camera);
+                    
+                }
+
+                if (ack) {
+                    ack("ack");
+                }
+
+                console.log(enemies);
+            });
+
+            socket.on('add_player', function(newPlayerInfo: AddedPlayerPacket) {
+                if (newPlayerInfo.id === player.getId()) return;
+                let newEnemy = new Enemy(newPlayerInfo.id, newPlayerInfo.username);
+                enemies.set(newPlayerInfo.id, newEnemy);
+                newEnemy.insertInto(camera);
+            });
+
+            socket.on('remove_player', function(removedPlayerId: string) {
+                let removedEnemy = enemies.get(removedPlayerId);
+                if (removedEnemy == null) return;
+                removedEnemy.removeFrom(camera);
+                enemies.remove(removedEnemy.getId());
+            });
+        
+            socket.on('state', function(state: GameStatePacket) {
+                //if (!initalised) return;
                 leaderID = state.leader;
                 let playerState: PlayerStatePacket = state.player;
-                let enemyStates: Array<PlayerStatePacket> = state.enemies || []; //
-                let removedEnemies: Array<string> = state.removedPlayers;
-                let addedPlayers: Array<any>   = state.addedPlayers;
-                let updatedAsteroids: Array<AsteroidStatePacket> = state.updatedAsteroids;
+                let enemyStates: Array<PlayerStatePacket> = state.enemies || []; 
+                let updatedAsteroids: Array<AsteroidStatePacket> = state.asteroids;
         
                 //Update player state
                 player.updateState(playerState);
@@ -153,30 +192,10 @@ class Game {
                 for (let i = 0; i < enemyStates.length; i++) {
                     let enemyState = enemyStates[i];
                     let enemy_id = enemyState.id;
-                    if (!enemies.has(enemy_id)) {
-                        enemies.set(enemy_id, new Enemy(enemy_id, ''));
-                    }
+                    if (!enemies.has(enemy_id)) continue;
         
                     //FIXME find a better way to deal with dead enemies
-        
                     enemies.get(enemy_id).updateState(enemyState);
-                }
-        
-                //Remove enemies who left since last tick
-                for (let i = 0; i < removedEnemies.length; i++) {
-                    let removedEnemy = enemies.get(removedEnemies[i]);
-                    removedEnemy.removeFrom(camera);
-                    enemies.remove(removedEnemy.getId());
-                }
-        
-                //Create player objects and mark with ID
-                for (let i = 0; i < addedPlayers.length; i++) {
-                    let newPlayerInfo = addedPlayers[i];
-                    if (newPlayerInfo.id === player.getId()) continue;
-                    let newEnemy = new Enemy(newPlayerInfo.id, newPlayerInfo.username);
-                    enemies.set(newPlayerInfo.id, newEnemy);
-                    newEnemy.insertInto(camera);
-        
                 }
         
                 //Create/update Asteroids as nessesary
@@ -210,6 +229,8 @@ class Game {
                 lastUpdate = Date.now();
                 draw();
             }, 1000/FPS);
+
+            socket.emit('join', username);
         
         }
         
@@ -264,8 +285,6 @@ class Game {
             }
         
         }
-        
-        socket.emit('join', username);
         
         const FPS = 30;
         let lastUpdate = Date.now();
