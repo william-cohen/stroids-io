@@ -19,7 +19,7 @@ import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, AddedPlayerPac
 
 //@ts-ignore: no compatible call siganatures
 const IS_MOBILE: boolean = IsMobile();
-const CONNECTION: string = "127.0.0.1:3001"; //process.env.SERVER_URL;
+const CONNECTION: string = "192.168.1.232:3001"; //process.env.SERVER_URL;
 const GAME_SIZE: number = 1000;
 const CANVAS_WIDTH: number = 0.95 * window.innerWidth;
 const CANVAS_HEIGHT: number = 0.95 * window.innerHeight;
@@ -117,8 +117,8 @@ class Game {
                 stars.push(new Star(2, player));
                 stars.push(new Star(1, player));
             }
-        
-            //Seup network event listeners (probably should refactor this)
+
+            //Ping event listener
             socket.on('pong', function(ms: number) {
                 Ping.calc(ms);
                 ui.setPing(ms);
@@ -186,6 +186,7 @@ class Game {
                 //Update player state
                 player.updateState(playerState);
                 player.setScore(state.score);
+                console.log(state);
                 ui.setScore(player.getScore());
         
                 //Update enemies state
@@ -246,7 +247,7 @@ class Game {
                 asteroids[i].update(delta);
             }
         
-            if (!player.isAlive()) return;
+            if (!player.isAlive()) debugger; //return;
             for (let i = 0; i < stars.length; i++) {
                 stars[i].update();
             }
