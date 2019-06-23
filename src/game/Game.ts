@@ -222,7 +222,6 @@ class Game {
         
             });
         
-        
             //Setup game loop
             setInterval(function() {
                 let delta = (Date.now() - lastUpdate)/1000;
