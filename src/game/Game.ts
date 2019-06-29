@@ -42,15 +42,15 @@ class Game {
         const camera = new Viewport({
             screenWidth: CANVAS_WIDTH,
             screenHeight: CANVAS_HEIGHT,
-            worldWidth: 1000,
-            worldHeight: 1000
+            worldWidth: GAME_SIZE,
+            worldHeight: GAME_SIZE
         });
         
         const gui = new Viewport({
             screenWidth: CANVAS_WIDTH,
             screenHeight: CANVAS_HEIGHT,
-            worldWidth: 1000,
-            worldHeight: 1000
+            worldWidth: GAME_SIZE,
+            worldHeight: GAME_SIZE
         });
 
         WebFont.load({
