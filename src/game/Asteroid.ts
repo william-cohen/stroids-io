@@ -30,7 +30,7 @@ class Asteroid {
         return this.sprite;
     }
 
-    setState(state: { x: any; y: any; vx: any; vy: any; }) {
+    updateState(state: { x: any; y: any; vx: any; vy: any; }) {
         this.pos.x = state.x;
         this.pos.y = state.y;
         this.vel.x = state.vx;

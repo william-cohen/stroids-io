@@ -20,7 +20,7 @@ import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, AddedPlayerPac
 //@ts-ignore: no compatible call siganatures
 const IS_MOBILE: boolean = IsMobile();
 const CONNECTION: string = "192.168.1.232:3001"; //process.env.SERVER_URL;
-const GAME_SIZE: number = 1000;
+const GAME_SIZE: number = 10000;
 const CANVAS_WIDTH: number = 0.95 * window.innerWidth;
 const CANVAS_HEIGHT: number = 0.95 * window.innerHeight;
 
@@ -65,7 +65,7 @@ class Game {
         app.stage.addChild(gui);
         
         // activate plugins if not on mobile
-        if (IS_MOBILE)
+        //if (IS_MOBILE)
             camera
                 .drag()
                 .pinch()
@@ -111,7 +111,7 @@ class Game {
             leaderID = '';
             Star.setMaxBounds(GAME_SIZE, GAME_SIZE);
             stars = [];
-            const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000045);
+            const NUM_STARS = Math.round(GAME_SIZE * GAME_SIZE * 0.000045);
             for (var i = 0; i < NUM_STARS; i++) {
                 stars.push(new Star(3, player));
                 stars.push(new Star(2, player));
@@ -144,7 +144,7 @@ class Game {
                         asteroids[id] = new Asteroid(id%3+1);
                         camera.addChild(asteroids[id].getSprite());
                     }
-                    asteroids[id].setState(asteroidInfo);
+                    asteroids[id].updateState(asteroidInfo);
                 }
 
                 for (let i = 0; i < state.enemies.length; i++) {
@@ -181,7 +181,7 @@ class Game {
                 leaderID = state.leader;
                 let playerState: PlayerStatePacket = state.player;
                 let enemyStates: Array<PlayerStatePacket> = state.enemies || []; 
-                let updatedAsteroids: Array<AsteroidStatePacket> = state.asteroids;
+                let asteroidStates: Array<AsteroidStatePacket> = state.asteroids;
         
                 //Update player state
                 player.updateState(playerState);
@@ -200,14 +200,14 @@ class Game {
                 }
         
                 //Create/update Asteroids as nessesary
-                for (let i = 0; i < updatedAsteroids.length; i++) {
-                    let asteroidInfo: AsteroidStatePacket = updatedAsteroids[i];
+                for (let i = 0; i < asteroidStates.length; i++) {
+                    let asteroidInfo: AsteroidStatePacket = asteroidStates[i];
                     let id: number = asteroidInfo.id;
                     if (asteroids[id] == null) {
                         asteroids[id] = new Asteroid(id%3+1);
-                        camera.addChild(asteroids[id].getSprite());
+                        camera.addChild(asteroids[id]!.getSprite());
                     }
-                    asteroids[id].setState(asteroidInfo);
+                    asteroids[id].updateState(asteroidInfo);
                 }
         
                 //Update name of leader (possible bug if lestrinaderID not found?)
