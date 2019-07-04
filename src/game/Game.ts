@@ -19,7 +19,7 @@ import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, AddedPlayerPac
 
 //@ts-ignore: no compatible call siganatures
 const IS_MOBILE: boolean = IsMobile();
-const CONNECTION: string = "192.168.1.232:3001"; //process.env.SERVER_URL;
+const CONNECTION: string = "127.0.0.1:3001"; //process.env.SERVER_URL;
 const GAME_SIZE: number = 10000;
 const CANVAS_WIDTH: number = 0.95 * window.innerWidth;
 const CANVAS_HEIGHT: number = 0.95 * window.innerHeight;
@@ -110,8 +110,9 @@ class Game {
             asteroids = [];
             leaderID = '';
             Star.setMaxBounds(GAME_SIZE, GAME_SIZE);
+            Star.setScreenBounds(1000, 1000);
             stars = [];
-            const NUM_STARS = Math.round(GAME_SIZE * GAME_SIZE * 0.000045);
+            const NUM_STARS = Math.round(CANVAS_WIDTH * CANVAS_HEIGHT * 0.000045);
             for (var i = 0; i < NUM_STARS; i++) {
                 stars.push(new Star(3, player));
                 stars.push(new Star(2, player));

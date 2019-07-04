@@ -97,6 +97,14 @@ class Player extends Observer {
         return this.id;
     }
 
+    getX(): number {
+        return this.pos.x;
+    }
+
+    getY(): number {
+        return this.pos.y;
+    }
+
     getVX(): number {
         return this.vel.x;
     }
