@@ -1,5 +1,6 @@
 export interface PlayerStatePacket {
     id: string;
+    name: string;
     thrust: true;
     alive: true;
     x: number;

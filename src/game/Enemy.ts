@@ -3,8 +3,9 @@ import Vector2 from '../util/Vector2';
 import hspline from '../util/HermiteSpline';
 import Util from '../util/Util';
 import { PlayerStatePacket } from './NetworkPackets';
+import Entity from './Entity';
 
-class Enemy {
+class Enemy extends Entity {
 
     private static NameStyle = new PIXI.TextStyle({
         fontFamily: 'RetroComputer',
@@ -15,8 +16,6 @@ class Enemy {
 
     private id: string;
     private username: string;
-    private pos: Vector2;
-    private vel: Vector2;
     private rotation: number;
     private oldPos: Vector2;
     private oldVel: Vector2;
@@ -28,6 +27,7 @@ class Enemy {
     private nametag: PIXI.Text;
 
     constructor(id: string, username: string) {
+        super();
         this.id = id;
         this.username = username;
  
@@ -83,6 +83,8 @@ class Enemy {
     }
 
     updateState(state: PlayerStatePacket) {
+        this.lifespan = Entity.DEFAULT_LIFESPAN;
+
         this.oldPos = this.pos.clone();
         this.oldVel = this.vel.clone();
         this.oldRotation = this.rotation;
@@ -100,6 +102,7 @@ class Enemy {
 
     update(/*delta*/) {
         if (!this.alive) return;
+        this.lifespan--;
 
         //this.pos.x += this.vel.x*delta;
         //this.pos.y += this.vel.y*delta;

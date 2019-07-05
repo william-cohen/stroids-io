@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js';
 import Vector2 from '../util/Vector2';
+import Entity from './Entity';
 
-class Asteroid {
-    private pos: Vector2;
-    private vel: Vector2;
+class Asteroid extends Entity {
     private sprite: PIXI.Sprite;
     private radius: number;
     constructor(size: Number) {
+        super();
         this.pos = new Vector2(0.0, 0.0);
         this.vel = new Vector2(0.0, 0.0);
         this.radius = 10;
@@ -24,6 +24,14 @@ class Asteroid {
             break;
         }
         this.sprite.anchor.set(0.5);
+    }
+
+    insertInto(camera: Viewport) {
+        camera.addChild(this.sprite);
+    }
+
+    removeFrom(camera: Viewport) {
+        camera.removeChild(this.sprite);
     }
 
     getSprite(): PIXI.Sprite {
