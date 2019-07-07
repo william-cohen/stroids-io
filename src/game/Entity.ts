@@ -6,16 +6,22 @@ import { PlayerStatePacket } from './NetworkPackets';
 
 abstract class Entity {
 
-    public static readonly DEFAULT_LIFESPAN: number = 180;
+    public static readonly DEFAULT_LIFESPAN: number = 3;
 
+    protected id: string | number;
     protected pos: Vector2;
     protected vel: Vector2;
     protected lifespan: number;
 
-    constructor() {
-        this.lifespan = 180;
+    constructor(id: string | number) {
+        this.lifespan = Entity.DEFAULT_LIFESPAN;
+        this.id = id;
         this.pos = new Vector2(0, 0);
         this.vel = new Vector2(0, 0);
+    }
+
+    getId() {
+        return this.id;
     }
 
     getX(): number {

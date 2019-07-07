@@ -16,6 +16,8 @@ import Star from './Star'; //FIXME
 import Latency from './Latency';
 import Controls from './controls/Controls';
 import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, AddedPlayerPacket, InitialStatePakcet } from './NetworkPackets';
+import Entity from './Entity';
+import { ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
 
 //@ts-ignore: no compatible call siganatures
 const IS_MOBILE: boolean = IsMobile();
@@ -78,8 +80,7 @@ class Game {
         // let playerStub = null;
         // let stubGraphics = new PIXI.Graphics();
         
-        let enemies: HashMap<string, Enemy>;
-        let asteroids: Array<Asteroid>;
+        let entities: Map<string | number, Entity>;
         let leaderID: string;
         let stars: Array<Star>;
         let ui: UIOverlay;
@@ -106,8 +107,8 @@ class Game {
             playerControls.setObserver(player);
             player.insertInto(camera);
         
-            enemies = new HashMap();
-            asteroids = [];
+            entities = new Map<number | string, Entity>();
+
             leaderID = '';
             Star.setMaxBounds(GAME_SIZE, GAME_SIZE);
             Star.setScreenBounds(1000, 1000);
@@ -141,31 +142,33 @@ class Game {
                 //Update player state
                 player.updateState(playerState);
                 player.setScore(state.score);
-                console.log(state);
+                // console.log(state);
                 ui.setScore(player.getScore());
         
                 //Update enemies state
                 for (let i = 0; i < enemyStates.length; i++) {
                     let enemyState = enemyStates[i];
                     let enemyId = enemyState.id;
-                    if (!enemies.has(enemyId)) {
+                    if (!entities.has(enemyId)) {
                         let enemyName = enemyState.name;
                         let newEnemy = new Enemy(enemyId, enemyName);
-                        enemies.set(enemyId, newEnemy);
+                        entities.set(enemyId, newEnemy);
                         newEnemy.insertInto(camera);
                     }
-                    enemies.get(enemyId).updateState(enemyState);
+                    entities.get(enemyId)!.updateState(enemyState);
                 }
         
                 //Create/update Asteroids as nessesary
                 for (let i = 0; i < asteroidStates.length; i++) {
                     let asteroidInfo: AsteroidStatePacket = asteroidStates[i];
                     let id: number = asteroidInfo.id;
-                    if (asteroids[id] == null) {
-                        asteroids[id] = new Asteroid(id%3+1);
-                        camera.addChild(asteroids[id]!.getSprite());
+                    if (!entities.has(id)) {
+                        let newAsteroid = new Asteroid(id);
+                        console.log(newAsteroid)
+                        entities.set(id, newAsteroid);
+                        newAsteroid.insertInto(camera);
                     }
-                    asteroids[id].updateState(asteroidInfo);
+                    entities.get(id)!.updateState(asteroidInfo);
                 }
         
                 //Update name of leader (possible bug if lestrinaderID not found?)
@@ -173,8 +176,8 @@ class Game {
                     if (leaderID === player.getId()) {
                         ui.setLeaderText('You are the leader!');
                     } else {
-                        let leader = enemies.get(leaderID);
-                        if (leader) ui.setLeaderText('Leader: ' + leader.getUsername());
+                        let leader = entities.get(leaderID);
+                        if (leader) ui.setLeaderText('Leader: ' + (leader as Enemy).getUsername());
                     }
                 }
         
@@ -193,15 +196,12 @@ class Game {
         }
         
         function update(delta: number) {
-        
-            const enemyArray: Array<Enemy> = enemies.values();
-            for (let i = 0; i < enemyArray.length; i++) {
-                enemyArray[i].update(); // delta
-            }
-        
-            for (let i = 0; i < asteroids.length; i++) {
-                if (asteroids[i] == null) continue;
-                asteroids[i].update(delta);
+            for (let entity of entities.values()) {
+                entity.update(delta);
+                if (entity.getLifespan() < 0) {
+                    entity.removeFrom(camera);
+                    entities.delete(entity.getId());
+                }
             }
             //if (!player.isAlive()) debugger; //return;
             for (let i = 0; i < stars.length; i++) {
@@ -225,14 +225,8 @@ class Game {
             }
             graphics.endFill();
         
-            let enemyArray = enemies.values();
-            for (let i = 0; i < enemyArray.length; i++) {
-                enemyArray[i].draw();
-            }
-        
-            for (let i = 0; i < asteroids.length; i++) {
-                if (asteroids[i] == null) continue;
-                asteroids[i].draw();
+            for (let entity of entities.values()) {
+                entity.draw();
             }
         
             if (player.isAlive()) {

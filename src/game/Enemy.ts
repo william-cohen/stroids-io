@@ -14,7 +14,7 @@ class Enemy extends Entity {
         align: 'center'
     });
 
-    private id: string;
+    protected id: string;
     private username: string;
     private rotation: number;
     private oldPos: Vector2;
@@ -27,7 +27,7 @@ class Enemy extends Entity {
     private nametag: PIXI.Text;
 
     constructor(id: string, username: string) {
-        super();
+        super(id);
         this.id = id;
         this.username = username;
  
@@ -100,9 +100,9 @@ class Enemy extends Entity {
         this.alive = state.alive;
     }
 
-    update(/*delta*/) {
+    update(delta: number) {
         if (!this.alive) return;
-        this.lifespan--;
+        this.lifespan -= delta;
 
         //this.pos.x += this.vel.x*delta;
         //this.pos.y += this.vel.y*delta;

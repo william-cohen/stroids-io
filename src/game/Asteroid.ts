@@ -5,12 +5,13 @@ import Entity from './Entity';
 class Asteroid extends Entity {
     private sprite: PIXI.Sprite;
     private radius: number;
-    constructor(size: Number) {
-        super();
+    constructor(id: number) {
+        super(id);
         this.pos = new Vector2(0.0, 0.0);
         this.vel = new Vector2(0.0, 0.0);
         this.radius = 10;
         this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures!['rock1.png']); 
+        let size = id%3 + 1;
         switch (size) {
         case 2:
             this.sprite = new PIXI.Sprite(PIXI.loader.resources['assets/spritesheet.json'].textures!['rock2.png']);
@@ -27,11 +28,11 @@ class Asteroid extends Entity {
     }
 
     insertInto(camera: Viewport) {
-        camera.addChild(this.sprite);
+        camera.addChild(this.getSprite());
     }
 
     removeFrom(camera: Viewport) {
-        camera.removeChild(this.sprite);
+        camera.removeChild(this.getSprite());
     }
 
     getSprite(): PIXI.Sprite {
@@ -39,6 +40,7 @@ class Asteroid extends Entity {
     }
 
     updateState(state: { x: any; y: any; vx: any; vy: any; }) {
+        this.lifespan = Entity.DEFAULT_LIFESPAN;
         this.pos.x = state.x;
         this.pos.y = state.y;
         this.vel.x = state.vx;
@@ -46,6 +48,7 @@ class Asteroid extends Entity {
     }
 
     update(delta: number) {
+        this.lifespan -= delta;
         this.pos.x += this.vel.x*delta;
         this.pos.y += this.vel.y*delta;
     }
