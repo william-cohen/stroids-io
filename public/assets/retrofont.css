@@ -1,0 +1,13 @@
+/* font converted using font-converter.net. thank you! */
+@font-face {
+  font-family: "RetroComputer";
+  src: url("./fonts/retrocomputerpersonaluse.eot"); /* IE9 Compat Modes */
+  src: url("./fonts/retrocomputerpersonaluse.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    url("./fonts/retrocomputerpersonaluse.otf") format("opentype"), /* Open Type Font */
+    url("./fonts/retrocomputerpersonaluse.svg") format("svg"), /* Legacy iOS */
+    url("./fonts/retrocomputerpersonaluse.ttf") format("truetype"), /* Safari, Android, iOS */
+    url("./fonts/retrocomputerpersonaluse.woff") format("woff"), /* Modern Browsers */
+    url("./fonts/retrocomputerpersonaluse.woff2") format("woff2"); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}

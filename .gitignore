@@ -1,2 +1,5 @@
 node_modules
 .env
+public/js/game.js
+public/js/game.js.map
+.vscode/settings.json
