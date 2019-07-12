@@ -23,7 +23,6 @@
     "dotenv": "^6.2.0",
     "dotenv-webpack": "^1.7.0",
     "express": "^4.16.4",
-    "hashmap": "^2.3.0",
     "is-mobile": "^2.0.0",
     "json-size": "^1.0.0",
     "pixi-viewport": "^3.18.1",

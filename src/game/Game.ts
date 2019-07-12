@@ -3,7 +3,6 @@ import { Application, Graphics, loader } from 'pixi.js';
 import Viewport from 'pixi-viewport';
 import IsMobile from 'is-mobile';
 import io from 'socket.io-client';
-import HashMap from 'hashmap';
 import WebFont from 'webfontloader';
 
 import KeyboardControls from './controls/KeyboardControls';

@@ -114,30 +114,34 @@ class Player extends Observer {
     }
 
     update(delta: number) {
+        if (!this.alive) {
+            this.vel.x = 0;
+            this.vel.y = 0;
+            return;
+        }
         let thrust = new Vector2(0,0);
         this.tick++; this.tick %= 30;
-        if (this.alive) {
-            this.thrust = false;
+        this.thrust = false;
 
-            this.tick++;
-            this.tick %= 30;
+        this.tick++;
+        this.tick %= 30;
 
-            //Left Arrow Key
-            if (this.controller.getA()) {
-                this.rotation -= 3.0 * delta;
-            }
-            //Right Arrow Key
-            if (this.controller.getD()) {
-                this.rotation += 3.0 * delta;
-            }
-            //Up Arrow Key
-            if (this.controller.getW()) {
-                this.thrust = true;
-                thrust.x = 30.0 * Math.cos(this.rotation);
-                thrust.y = 30.0 * Math.sin(this.rotation);
-            }
-            // this.socket.emit('input', this.controller.input);
+        //Left Arrow Key
+        if (this.controller.getA()) {
+            this.rotation -= 3.0 * delta;
         }
+        //Right Arrow Key
+        if (this.controller.getD()) {
+            this.rotation += 3.0 * delta;
+        }
+        //Up Arrow Key
+        if (this.controller.getW()) {
+            this.thrust = true;
+            thrust.x = 30.0 * Math.cos(this.rotation);
+            thrust.y = 30.0 * Math.sin(this.rotation);
+        }
+        // this.socket.emit('input', this.controller.input);
+    
 
         this.spos = this.spos.add(this.svel.scale(delta));
 
