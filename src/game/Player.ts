@@ -97,6 +97,10 @@ class Player extends Observer {
         return this.id;
     }
 
+    getUsername() {
+        return this.username;
+    }
+
     getX(): number {
         return this.pos.x;
     }

@@ -14,7 +14,7 @@ import Asteroid from './Asteroid';
 import Star from './Star'; //FIXME
 import Latency from './Latency';
 import Controls from './controls/Controls';
-import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, AddedPlayerPacket, InitialStatePakcet } from './NetworkPackets';
+import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, PlayerInfoPacket, InitialStatePakcet } from './NetworkPackets';
 import Entity from './Entity';
 import { ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
 
@@ -80,7 +80,7 @@ class Game {
         // let stubGraphics = new PIXI.Graphics();
         
         let entities: Map<string | number, Entity>;
-        let leaderID: string;
+        let leaderInfo: PlayerInfoPacket = {id: '', username: ''};
         let stars: Array<Star>;
         let ui: UIOverlay;
         let playerControls: Controls;
@@ -108,7 +108,6 @@ class Game {
         
             entities = new Map<number | string, Entity>();
 
-            leaderID = '';
             Star.setMaxBounds(GAME_SIZE, GAME_SIZE);
             Star.setScreenBounds(1000, 1000);
             stars = [];
@@ -133,7 +132,7 @@ class Game {
         
             socket.on('state', function(state: GameStatePacket) {
                 //if (!initalised) return;
-                leaderID = state.leader;
+                leaderInfo.id = state.leader;
                 let playerState: PlayerStatePacket = state.player;
                 let enemyStates: Array<PlayerStatePacket> = state.enemies; 
                 let asteroidStates: Array<AsteroidStatePacket> = state.asteroids;
@@ -141,7 +140,7 @@ class Game {
                 //Update player state
                 player.updateState(playerState);
                 player.setScore(state.score);
-                // console.log(state);
+                 console.log(state);
                 ui.setScore(player.getScore());
         
                 //Update enemies state
@@ -172,14 +171,21 @@ class Game {
         
                 //Update name of leader (possible bug if lestrinaderID not found?)
                 if (player.isAlive()) {
-                    if (leaderID === player.getId()) {
+                    if (leaderInfo.id === player.getId()) {
                         ui.setLeaderText('You are the leader!');
                     } else {
-                        let leader = entities.get(leaderID);
-                        if (leader) ui.setLeaderText('Leader: ' + (leader as Enemy).getUsername());
+                        ui.setLeaderText('Leader: ' + leaderInfo.username);
+                        if (leaderInfo.username === '')
+                            socket.emit('nameOf', leaderInfo.id);
                     }
                 }
         
+            });
+
+            socket.on('nameIs', function(info: PlayerInfoPacket) {
+                let enemy = entities.get(info.id);
+                if (enemy) (enemy as Enemy).setUsername(info.username);
+                if (leaderInfo.id === info.id) leaderInfo.username = info.username;
             });
         
             //Setup game loop
@@ -200,6 +206,11 @@ class Game {
                 if (entity.getLifespan() < 0) {
                     entity.removeFrom(camera);
                     entities.delete(entity.getId());
+                }
+                if (entity instanceof Enemy) {
+                    let enemy = (entity as Enemy);
+                    if (!enemy.getUsername()) 
+                        socket.emit('nameOf', enemy.getId())
                 }
             }
             //if (!player.isAlive()) debugger; //return;
@@ -240,7 +251,7 @@ class Game {
         let lastUpdate = Date.now();
         
         // eslint-disable-next-line no-console
-        console.log('Stroids Client v0.4.0');
+        console.log('Stroids Client v0.4.5');
 
     }
 }

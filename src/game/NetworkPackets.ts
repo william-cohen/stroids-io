@@ -29,11 +29,11 @@ export interface GameStatePacket {
 
 export interface InitialStatePakcet {
     player: PlayerStatePacket;
-    enemies: Array<AddedPlayerPacket>;
+    enemies: Array<PlayerInfoPacket>;
     asteroids: Array<AsteroidStatePacket>;
 }
 
-export interface AddedPlayerPacket {
+export interface PlayerInfoPacket {
     id: string;
     username: string;
 }

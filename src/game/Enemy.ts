@@ -15,7 +15,7 @@ class Enemy extends Entity {
     });
 
     protected id: string;
-    private username: string;
+    private username: string | undefined;
     private rotation: number;
     private oldPos: Vector2;
     private oldVel: Vector2;
@@ -68,7 +68,7 @@ class Enemy extends Entity {
         return this.id;
     }
 
-    getUsername(): string {
+    getUsername(): string | undefined {
         return this.username;
     }
 
@@ -131,6 +131,11 @@ class Enemy extends Entity {
         this.sprite.rotation = angle + Math.PI/2;
 
         this.nametag.position.set(p.x, p.y + 30);
+    }
+
+    setUsername(name: string) {
+        this.username = name;
+        this.nametag.text = name;
     }
 
 }
