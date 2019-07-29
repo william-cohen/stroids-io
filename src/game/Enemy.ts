@@ -82,7 +82,7 @@ class Enemy extends Entity {
         camera.removeChild(this.nametag);
     }
 
-    updateState(state: PlayerStatePacket) {
+    updateState(state: PlayerStatePacket, delta: number) {
         this.lifespan = Entity.DEFAULT_LIFESPAN;
 
         this.oldPos = this.pos.clone();
@@ -90,8 +90,8 @@ class Enemy extends Entity {
         this.oldRotation = this.rotation;
         this.lerp_t = 0;
 
-        this.pos.x = state.x;
-        this.pos.y = state.y;
+        this.pos.x = state.x + (state.vx * delta);
+        this.pos.y = state.y + (state.vy * delta);
         this.vel.x = state.vx;
         this.vel.y = state.vy;
 

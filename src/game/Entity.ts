@@ -48,7 +48,7 @@ abstract class Entity {
 
     abstract removeFrom(camera: Viewport): void;
 
-    abstract updateState(state: any): void;
+    abstract updateState(state: any, delta: number): void;
 
     abstract update(delta?: number): void;
 

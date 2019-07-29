@@ -63,19 +63,17 @@ class Player extends Observer {
     }
 
     notifyInputChange() {
-        //FIXME
-        //console.log('Input changed!');
         this.socket.emit('input', this.controller.input);
     }
 
-    updateState(state: PlayerStatePacket) {
+    updateState(state: PlayerStatePacket, delta: number) {
         if (this.id === 'null') {
             this.pos.x = state.x;
             this.pos.y = state.y;
             this.id = state.id;
         }
-        this.spos.x = state.x;
-        this.spos.y = state.y;
+        this.spos.x = state.x + (state.vx * delta);
+        this.spos.y = state.y + (state.vy * delta);
         this.svel.x = state.vx;
         this.svel.y = state.vy;
         this.rotation = state.rotation; //srotation

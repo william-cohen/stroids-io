@@ -16,7 +16,7 @@ import Latency from './Latency';
 import Controls from './controls/Controls';
 import { GameStatePacket, PlayerStatePacket, AsteroidStatePacket, PlayerInfoPacket, InitialStatePakcet } from './NetworkPackets';
 import Entity from './Entity';
-import { ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
+import TimeSync from '../util/TimeSync';
 
 //@ts-ignore: no compatible call siganatures
 const IS_MOBILE: boolean = IsMobile();
@@ -28,6 +28,7 @@ const CANVAS_HEIGHT: number = 0.95 * window.innerHeight;
 console.log('Connecting to ' + CONNECTION);
 const socket = io(CONNECTION);
 const Ping = Latency.init(socket);
+const timeSync = new TimeSync(socket);
 
 class Game {
     constructor(username: string) {
@@ -137,10 +138,11 @@ class Game {
                 let enemyStates: Array<PlayerStatePacket> = state.enemies; 
                 let asteroidStates: Array<AsteroidStatePacket> = state.asteroids;
         
+                const delta = (state.timestamp - timeSync.getTime()) / 1000;
+
                 //Update player state
-                player.updateState(playerState);
+                player.updateState(playerState, delta);
                 player.setScore(state.score);
-                 console.log(state);
                 ui.setScore(player.getScore());
         
                 //Update enemies state
@@ -153,7 +155,7 @@ class Game {
                         entities.set(enemyId, newEnemy);
                         newEnemy.insertInto(camera);
                     }
-                    entities.get(enemyId)!.updateState(enemyState);
+                    entities.get(enemyId)!.updateState(enemyState, delta);
                 }
         
                 //Create/update Asteroids as nessesary
@@ -162,11 +164,10 @@ class Game {
                     let id: number = asteroidInfo.id;
                     if (!entities.has(id)) {
                         let newAsteroid = new Asteroid(id);
-                        console.log(newAsteroid)
                         entities.set(id, newAsteroid);
                         newAsteroid.insertInto(camera);
                     }
-                    entities.get(id)!.updateState(asteroidInfo);
+                    entities.get(id)!.updateState(asteroidInfo, delta);
                 }
         
                 //Update name of leader (possible bug if lestrinaderID not found?)
